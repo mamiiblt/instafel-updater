@@ -1,4 +1,4 @@
-package me.mamiiblt.instafel.updater;
+package me.mamiiblt.instafel.updater.utils;
 
 import android.app.Activity;
 import android.content.Context;
@@ -17,7 +17,7 @@ public class LogUtils {
     private final File logFile;
     private final String LOG_FILE_NAME = "app_log.txt";
 
-    public LogUtils(Activity ctx) {
+    public LogUtils(Context ctx) {
         this.ctx = ctx;
         this.logFile = new File(ctx.getFilesDir(), LOG_FILE_NAME);
     }
@@ -74,7 +74,7 @@ public class LogUtils {
     }
 
     private String getTs() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM.dd.yyyy HH:mm:ss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
         return dateFormat.format(new Date());
     }
 

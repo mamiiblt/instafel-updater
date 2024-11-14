@@ -6,4 +6,8 @@
     </style>
 
     <style name="Theme.InstafelUpdater" parent="Base.Theme.InstafelUpdater" />
+    <style name="AppBarTheme" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">
+        <item name="colorPrimary">@color/black</item>
+        <item name="colorOnPrimary">@android:color/white</item>
+    </style>
 </resources>

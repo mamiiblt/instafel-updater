@@ -1,3 +1,38 @@
 <resources>
     <string name="app_name">Instafel Updater</string>
+
+    <!-- Nav Bar -->
+    <string name="status">Status</string>
+    <string name="logs">Log</string>
+    <string name="settings">Settings</string>
+
+    <!-- Status Fragment -->
+    <string name="shizuku_status">Shizuku Status</string>
+    <string name="selected_arch">Selected Architecture</string>
+    <string name="selected_installation_type">Selected Installation Type</string>
+    <string name="updater_status">Updater Status</string>
+    <string name="updater_status_sub">Running with 1 hour mode</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+
+    <!-- Settings Fragment -->
+    <string name="cname_general">General</string>
+    <string name="cname_behavior">Behavior</string>
+    <string name="cname_about">About Updater</string>
+    <string name="material_you">Material You</string>
+    <string name="material_you_s">Enable Material You design system for A12+</string>
+    <string name="checker_interval">Checker Interval</string>
+    <string name="checker_interval_s">Change checker interval</string>
+    <string name="arch">Architecture</string>
+    <string name="arch_s">Change architecture</string>
+    <string name="itype">Installation Type</string>
+    <string name="itype_s">Change installation type</string>
+    <string name="send_notif">Send Notification</string>
+    <string name="send_notif_s">Updater sends a notification after updating Instafel</string>
+    <string name="send_toast">Send Toast After Update</string>
+    <string name="send_toast_s">Updater sends a toast after updating Instafek</string>
+    <string name="use_mobile_data">Use Mobile Data</string>
+    <string name="use_mobile_data_s">Use mobile data for downloading update too</string>
+    <string name="hour12_rule">12 Hour Rule</string>
+    <string name="hour12_rule"></string>
 </resources>

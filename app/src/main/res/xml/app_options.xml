@@ -1,4 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-  
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <PreferenceCategory
+        android:title="General"
+        app:iconSpaceReserved="false">
+        <SwitchPreferenceCompat
+            android:key="material_you"
+            android:title="Material You"
+            app:iconSpaceReserved="false"
+            android:summary="Enable Material You design system for Android 12+"
+            android:defaultValue="true" />
+        <ListPreference
+            android:key="checker_interval"
+            android:title="Checker Interval"
+            android:summary="Change checker interval"
+            android:entries="@array/checker_interval_list"
+            android:entryValues="@array/checker_interval_list"
+            android:defaultValue="4 hour"
+            app:iconSpaceReserved="false" />
+        <ListPreference
+            android:key="checker_arch"
+            android:title="Architecture"
+            android:summary="Change architecture"
+            android:entries="@array/app_arch"
+            android:entryValues="@array/app_arch"
+            android:defaultValue="NULL"
+            app:iconSpaceReserved="false" />
+        <ListPreference
+            android:key="checker_type"
+            android:title="Installation Type"
+            android:summary="Change installation type"
+            android:entries="@array/app_type"
+            android:entryValues="@array/app_type"
+            android:defaultValue="NULL"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Behavior" app:iconSpaceReserved="false">
+        <SwitchPreferenceCompat
+            android:key="send_notification"
+            android:title="Send Notification"
+            app:iconSpaceReserved="false"
+            android:summary="Updater sends a notification after updating Instafel"
+            android:defaultValue="true" />
+        <SwitchPreferenceCompat
+            android:key="send_toast"
+            android:title="Show Toast After Update"
+            android:summary="Updater shows a toast after updating Instafel"
+            app:iconSpaceReserved="false"
+            android:defaultValue="false" />
+        <SwitchPreferenceCompat
+            android:key="use_mobile_data"
+            android:title="Use Mobile Data"
+            app:iconSpaceReserved="false"
+            android:summary="Use mobile data for downloading update too"
+            android:defaultValue="false" />
+        <SwitchPreferenceCompat
+            android:key="12_hour_rule"
+            android:title="12 Hour Rule"
+            app:iconSpaceReserved="false"
+            android:summary="Allows you to install the update after released 12 hours"
+            android:defaultValue="false" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="About Updater" app:iconSpaceReserved="false">
+        <Preference
+            android:key="source_code"
+            android:title="Source Code"
+            android:summary="https://github.com/mamiiblt/instafel-updater"
+            app:iconSpaceReserved="false" />
+        <Preference
+            android:key="create_issue"
+            android:title="Create Issue"
+            android:summary="Create a issue on Github for feedback!"
+            app:iconSpaceReserved="false" />
+        <Preference
+            android:key="app_version"
+            android:title="App Version"
+            android:summary="Version v1.0.0 (commit fa8c4c3)"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
 </PreferenceScreen>
