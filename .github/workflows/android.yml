@@ -50,6 +50,9 @@ jobs:
         sed -i "s/versionName = \".*\"/versionName = \"${{ env.NEW_VERSION }}\"/" app/build.gradle.kts
         sed -i "s/versionCode = .*/versionCode = ${NEW_VERSION_CODE}/" app/build.gradle.kts
 
+    - name: cat build.gradle.kts
+      run: cat app/build.gradle.kts
+
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
       
