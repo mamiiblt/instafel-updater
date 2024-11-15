@@ -15,7 +15,7 @@ A special thank you to the creators of the following libraries, whose contributi
 
 - [Shizuku](https://shizuku.rikka.app/): A powerful tool for accessing Android system services.
 - [WorkManager](https://developer.android.com/reference/androidx/work/WorkManager): A library for managing background tasks in a reliable way.
-- [OkHttp](https://square.github.io/okhttp/): A high-performance HTTP client used for downloading updates.
+- [OkHttp](https://square.github.io/okhttp/): A high-performance HTTP client used for checking updates.
 - [Material-You-Preferences](https://github.com/TTTT55/Material-You-Preferences): A library for creating modern, Material You-style preference screens.
 
 ## Contributions
