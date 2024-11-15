@@ -39,7 +39,7 @@ jobs:
         version=$(jq -r .version ./build_req.json)
         commit_id=$(git rev-parse --short HEAD)
         new_version="${version}-${commit_id}"
-        current_version_code=$(grep versionCode ./app/build.gradle.kts | awk '{print $2}')
+        current_version_code=$(grep "versionCode" ./app/build.gradle.kts | sed 's/[^0-9]*\([0-9]*\).*/\1/')
         new_version_code=$((current_version_code + 1))
         
         echo "NEW_VERSION=${new_version}" >> $GITHUB_ENV
@@ -48,8 +48,8 @@ jobs:
     - name: Update versionName in build.gradle.kts
       run: |
         sed -i "s/versionName = \".*\"/versionName = \"${{ env.NEW_VERSION }}\"/" app/build.gradle.kts
-        sed -i "s/versionCode = .*/versionCode = ${ env.NEW_VERSION_CODE }/" app/build.gradle.kts
-
+        sed -i "s/versionCode = [0-9]*/versionCode = ${NEW_VERSION_CODE}/" app/build.gradle.kts
+        
     - name: cat build.gradle.kts
       run: cat app/build.gradle.kts
 
