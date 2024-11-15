@@ -47,6 +47,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import me.mamiiblt.instafel.updater.utils.AppPreferences;
+import me.mamiiblt.instafel.updater.utils.LocalizationUtils;
 import me.mamiiblt.instafel.updater.utils.LogUtils;
 import me.mamiiblt.instafel.updater.utils.ShizukuInstaller;
 import me.mamiiblt.instafel.updater.utils.Utils;
@@ -69,6 +70,7 @@ public class UpdateWork extends Worker {
     private String uVersion;
     private LogUtils logUtils;
     private NotificationManager notificationManager;
+    private LocalizationUtils localizationUtils;
 
     public UpdateWork(Context ctx, WorkerParameters params) {
         super(ctx, params);
@@ -84,10 +86,11 @@ public class UpdateWork extends Worker {
         logUtils.w("Work is running.");
         notificationBuilder = new NotificationCompat.Builder(ctx, CHANNEL_ID);
         notificationManager = ctx.getSystemService(NotificationManager.class);
-        // Start Shizuku User Service for run commands
+        localizationUtils = new LocalizationUtils(getApplicationContext());
 
-        logUtils.w("Starting UserService");
-        ShizukuInstaller.ensureUserService(ctx);
+        // Update locale
+
+        localizationUtils.updateAppLanguage();
 
         // Get arch and type from SharedPreferences
 
@@ -193,10 +196,15 @@ public class UpdateWork extends Worker {
                                 if (duration.toHours() >= 12) {
                                     // allow
                                 } else {
-                                    logUtils.w("Duration is " + duration + ". So update stopped.");
+                                    logUtils.w("Duration is " + duration.getSeconds() + ", so update stopped.");
                                     return Result.success();
                                 }
                             }
+
+                            // Start Shizuku User Service for run commands
+
+                            logUtils.w("Starting UserService");
+                            ShizukuInstaller.ensureUserService(ctx);
 
                             JSONArray assets = res.getJSONArray("assets");
 
@@ -213,7 +221,7 @@ public class UpdateWork extends Worker {
 
                                 // DOWNLOAD & INSTALL UPDATE
                                 uVersion = version;
-                                Intent fgServiceIntent = new Intent(ctx, InstafelUpdateService.class);
+                                Intent fgServiceIntent = new Intent(ctx, InstafelUpdate.class);
                                 fgServiceIntent.putExtra("file_url", b_download_url);
                                 fgServiceIntent.putExtra("version", uVersion);
                                 ctx.startService(fgServiceIntent);

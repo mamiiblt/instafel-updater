@@ -184,8 +184,8 @@ public class InstafelUpdateService extends Service {
 
     private void notifyStatus(int prog, String finalFormattedDownloadedSize) {
         notificationBuilder
-                .setContentTitle("Downloading Update")
-                .setContentText(prog + "% downloaded (" + finalFormattedDownloadedSize + " MB)")
+                .setContentTitle(ctx.getString(R.string.n1_downloading))
+                .setContentText(prog + "% (" + finalFormattedDownloadedSize + "/" + formattedFileSize +" MB)")
                 .setProgress(100, prog, false);
         notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
     }
@@ -193,8 +193,8 @@ public class InstafelUpdateService extends Service {
 
     private Notification notifyWaitingAPI() {
         notificationBuilder
-                .setContentTitle("Waiting Server for Update")
-                .setContentText("Waiting API connection..")
+                .setContentTitle(ctx.getString(R.string.n2_waiting))
+                .setContentText(ctx.getString(R.string.n2_sub))
                 .setSmallIcon(android.R.drawable.stat_sys_download)
                 .setOngoing(true)
                 .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE);
@@ -203,8 +203,8 @@ public class InstafelUpdateService extends Service {
 
     private void notifyInstallingUpdate() {
         notificationBuilder
-                .setContentTitle("Installing Update")
-                .setContentText("Download complete, installing...")
+                .setContentTitle(ctx.getString(R.string.n3_installing))
+                .setContentText(ctx.getString(R.string.n3_sub))
                 .setProgress(0, 0, true)
                 .setSmallIcon(R.drawable.installing);
         notificationManager.notify(1, notificationBuilder.build());
@@ -212,8 +212,8 @@ public class InstafelUpdateService extends Service {
 
     private void notifyUpdateInstalled(String uVersion) {
         notificationBuilder
-                .setContentTitle("Update Successfully Completed")
-                .setContentText("Instafel updated to v" + version)
+                .setContentTitle(ctx.getString(R.string.n4_complete))
+                .setContentText(ctx.getString(R.string.n4_sub, uVersion))
                 .setSmallIcon(R.drawable.update_success)
                 .setProgress(0, 0, false);
         notificationManager.notify(1, notificationBuilder.build());
@@ -221,7 +221,7 @@ public class InstafelUpdateService extends Service {
 
     private void notifyError(String error) {
         notificationBuilder
-                .setContentTitle("Error")
+                .setContentTitle(ctx.getString(R.string.error))
                 .setContentText(error)
                 .setSmallIcon(android.R.drawable.stat_notify_error)
                 .setProgress(0, 0, false);
