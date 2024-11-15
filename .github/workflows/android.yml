@@ -68,6 +68,5 @@ jobs:
       with:
         tag_name: ${{ env.NEW_VERSION }}
         files: ./app/build/outputs/apk/release/app-release.apk
-        name: Release '${{ steps.version.outputs.version }}'
-        body: '${{ steps.version.outputs.version }}'
+        name: New Release
         token: ${{ secrets.GITHUB_TOKEN }}
