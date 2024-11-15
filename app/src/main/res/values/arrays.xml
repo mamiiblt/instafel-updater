@@ -20,4 +20,9 @@
         <item>14 hour</item>
         <item>24 hour</item>
     </string-array>
+    <string-array name="languages">
+        <item>Use Device Language</item>
+        <item>English (en_US)</item>
+        <item>Türkçe (tr_TR)</item>
+    </string-array>
 </resources>

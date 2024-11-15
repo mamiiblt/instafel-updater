@@ -9,5 +9,12 @@
     <style name="AppBarTheme" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">
         <item name="colorPrimary">@color/black</item>
         <item name="colorOnPrimary">@android:color/white</item>
+
     </style>
+    <style name="Preference.SwitchPreferenceCompat" parent="@style/Preference.SwitchPreferenceCompat.Material"
+        tools:ignore="ResourceCycle">
+        <item name="widgetLayout">@layout/m3_switch</item>
+    </style>
+
+
 </resources>

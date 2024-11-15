@@ -1,5 +1,6 @@
 package me.mamiiblt.instafel.updater;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -27,6 +28,7 @@ import androidx.preference.PreferenceManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.color.DynamicColors;
 
+import me.mamiiblt.instafel.updater.utils.LocalizationUtils;
 import me.mamiiblt.instafel.updater.utils.LogUtils;
 import me.mamiiblt.instafel.updater.utils.ShizukuInstaller;
 import me.mamiiblt.instafel.updater.utils.Utils;
@@ -40,15 +42,16 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences prefsApp;
     SharedPreferences.Editor prefsEditor;
     LogUtils logUtils;
+    LocalizationUtils localizationUtils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         prefsApp = PreferenceManager.getDefaultSharedPreferences(this);
         prefsEditor = prefsApp.edit();
-        // Log.v("IFL", prefsApp.getString("checker_arch", "NULL"));
         logUtils = new LogUtils(this);
-
+        localizationUtils = new LocalizationUtils(getApplicationContext());
+        localizationUtils.updateAppLanguage();
 
         if (!prefsApp.getBoolean("init", false)) {
             prefsEditor.putString("checker_arch", "NULL");
@@ -99,15 +102,17 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
 
+        Context ctx = getApplicationContext();
+
         navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
             @Override
             public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
                 if (destination.getId() == R.id.nav_info) {
-                    titleView.setText("Status");
+                    titleView.setText(ctx.getString(R.string.status));
                 } else if (destination.getId() == R.id.nav_logs) {
-                    titleView.setText("Logs");
+                    titleView.setText(ctx.getString(R.string.logs));
                 } else if (destination.getId() == R.id.nav_settings) {
-                    titleView.setText("Settings");
+                    titleView.setText(ctx.getString(R.string.settings));
                 }
             }
         });
@@ -121,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
                 logUtils.w("Shizuku permission is granted.");
             } else {
                 logUtils.w("Shizuku permission is rejected.");
-                Utils.showDialog(this, "Permission Rejected", "Please authorize Instafel Updater from Shizuku App");
+                Utils.showDialog(this, this.getString(R.string.permission_rejected), this.getString(R.string.perm_rejected_desc));
             }
         }
     }
@@ -132,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == 105) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             } else {
-                Toast.makeText(this, "Permission rejected, please allow from settings", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, this.getString(R.string.perm_rejected_desc), Toast.LENGTH_SHORT).show();
                 finish();
             }
         }

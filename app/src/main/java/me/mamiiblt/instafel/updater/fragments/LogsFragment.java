@@ -63,7 +63,7 @@ public class LogsFragment extends Fragment {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getActivity(), "Runtime log cleared.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getActivity().getString(R.string.runtime_log_cleared), Toast.LENGTH_SHORT).show();
                 logUtils.clearLog();
                 logView.setText(logUtils.readLog());
             }

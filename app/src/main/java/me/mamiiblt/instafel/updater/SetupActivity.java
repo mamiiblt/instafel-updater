@@ -83,8 +83,8 @@ public class SetupActivity extends AppCompatActivity {
         } else {
 
             new AlertDialog.Builder(this)
-                    .setTitle("Warning")
-                    .setMessage("Please select an architecture and installation type.")
+                    .setTitle(this.getString(R.string.warning))
+                    .setMessage(this.getString(R.string.warning_desc))
                     .setNegativeButton(android.R.string.yes, null)
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();

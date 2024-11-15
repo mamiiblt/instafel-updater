@@ -17,7 +17,7 @@ android {
         minSdk = 26
         targetSdk = 34
         versionCode = 1
-        versionName = "1.0-beta"
+        versionName = "1.0.0-cmmt"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -56,6 +56,7 @@ dependencies {
     implementation("dev.rikka.shizuku:provider:$shizuku_version")
     implementation("androidx.work:work-runtime:$work_version")
     implementation("com.squareup.okhttp3:okhttp:$okhttp_version")
+    implementation("com.github.TTTT55:Material-You-Preferences:0.2.5")
     implementation(libs.navigation.ui)
     implementation(libs.preference)
     testImplementation(libs.junit)

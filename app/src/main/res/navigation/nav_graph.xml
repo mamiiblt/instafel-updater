@@ -8,19 +8,18 @@
     <fragment
         android:id="@+id/nav_info"
         android:name="me.mamiiblt.instafel.updater.fragments.InfoFragment"
-        android:label="Status"
+        android:label="@string/status"
         tools:layout="@layout/fragment_info" />
 
     <fragment
         android:id="@+id/nav_logs"
         android:name="me.mamiiblt.instafel.updater.fragments.LogsFragment"
-        android:label="Logs"
+        android:label="@string/logs"
         tools:layout="@layout/fragment_logs" />
 
     <fragment
         android:id="@+id/nav_settings"
         android:name="me.mamiiblt.instafel.updater.fragments.SettingsFragment"
-        android:label="Settings"
-        tools:layout="@layout/fragment_settings" />
+        android:label="@string/settings" />
 
 </navigation>

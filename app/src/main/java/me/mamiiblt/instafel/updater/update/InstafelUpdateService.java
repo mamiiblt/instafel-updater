@@ -1,4 +1,4 @@
-package me.mamiiblt.instafel.updater;
+package me.mamiiblt.instafel.updater.update;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -21,6 +21,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.text.DecimalFormat;
 
+import me.mamiiblt.instafel.updater.R;
 import me.mamiiblt.instafel.updater.utils.LogUtils;
 import me.mamiiblt.instafel.updater.utils.ShizukuInstaller;
 import me.mamiiblt.instafel.updater.utils.Utils;
@@ -163,7 +164,7 @@ public class InstafelUpdateService extends Service {
                             logUtils.w("Update installed.");
                             ShizukuInstaller.runCommand(ctx, "rm -r /data/local/tmp/INSTAFEL_UPDATE.apk");
                             logUtils.w("Downloaded apk & temp apk removed");
-                            notifyUpdateInstalled("HERE");
+                            notifyUpdateInstalled();
                             logUtils.w("Instafel succesfully updated.");
                         } else {
                             logUtils.w("Update installation failed.");
@@ -210,10 +211,10 @@ public class InstafelUpdateService extends Service {
         notificationManager.notify(1, notificationBuilder.build());
     }
 
-    private void notifyUpdateInstalled(String uVersion) {
+    private void notifyUpdateInstalled() {
         notificationBuilder
                 .setContentTitle(ctx.getString(R.string.n4_complete))
-                .setContentText(ctx.getString(R.string.n4_sub, uVersion))
+                .setContentText(ctx.getString(R.string.n4_sub, version))
                 .setSmallIcon(R.drawable.update_success)
                 .setProgress(0, 0, false);
         notificationManager.notify(1, notificationBuilder.build());

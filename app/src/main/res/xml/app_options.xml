@@ -5,82 +5,91 @@
     >
 
     <PreferenceCategory
-        android:title="General"
+        android:title="@string/cname_general"
         app:iconSpaceReserved="false">
         <SwitchPreferenceCompat
             android:key="material_you"
-            android:title="Material You"
+            android:title="@string/material_you"
             app:iconSpaceReserved="false"
-            android:summary="Enable Material You design system for Android 12+"
+            android:summary="@string/material_you_s"
             android:defaultValue="true" />
         <ListPreference
+            android:key="language"
+            android:title="@string/language"
+            android:summary="@string/language_s"
+            android:entries="@array/languages"
+            android:entryValues="@array/languages"
+            android:defaultValue="Use Device Language"
+            app:iconSpaceReserved="false" />
+        <ListPreference
             android:key="checker_interval"
-            android:title="Checker Interval"
-            android:summary="Change checker interval"
+            android:title="@string/checker_interval"
+            android:summary="@string/checker_interval_s"
             android:entries="@array/checker_interval_list"
             android:entryValues="@array/checker_interval_list"
             android:defaultValue="4 hour"
             app:iconSpaceReserved="false" />
         <ListPreference
             android:key="checker_arch"
-            android:title="Architecture"
-            android:summary="Change architecture"
+            android:title="@string/arch"
+            android:summary="@string/arch_s"
             android:entries="@array/app_arch"
             android:entryValues="@array/app_arch"
             android:defaultValue="NULL"
             app:iconSpaceReserved="false" />
         <ListPreference
             android:key="checker_type"
-            android:title="Installation Type"
-            android:summary="Change installation type"
+            android:title="@string/itype"
+            android:summary="@string/itype_s"
             android:entries="@array/app_type"
             android:entryValues="@array/app_type"
             android:defaultValue="NULL"
             app:iconSpaceReserved="false" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Behavior" app:iconSpaceReserved="false">
+    <PreferenceCategory android:title="@string/cname_behavior" app:iconSpaceReserved="false">
         <SwitchPreferenceCompat
             android:key="send_notification"
-            android:title="Send Notification"
+            android:title="@string/send_notif"
             app:iconSpaceReserved="false"
-            android:summary="Updater sends a notification after updating Instafel"
+            android:enabled="false"
+            android:summary="@string/send_notif_s"
             android:defaultValue="true" />
         <SwitchPreferenceCompat
             android:key="send_toast"
-            android:title="Show Toast After Update"
-            android:summary="Updater shows a toast after updating Instafel"
+            android:title="@string/send_toast"
+            android:summary="@string/send_toast_s"
             app:iconSpaceReserved="false"
             android:defaultValue="false" />
         <SwitchPreferenceCompat
             android:key="use_mobile_data"
-            android:title="Use Mobile Data"
+            android:title="@string/use_mobile_data"
             app:iconSpaceReserved="false"
-            android:summary="Use mobile data for downloading update too"
+            android:summary="@string/use_mobile_data_s"
             android:defaultValue="false" />
         <SwitchPreferenceCompat
             android:key="12_hour_rule"
-            android:title="12 Hour Rule"
+            android:title="@string/hour12_rule"
             app:iconSpaceReserved="false"
-            android:summary="Allows you to install the update after released 12 hours"
+            android:summary="@string/hour12_rule_s"
             android:defaultValue="false" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="About Updater" app:iconSpaceReserved="false">
+    <PreferenceCategory android:title="@string/cname_about" app:iconSpaceReserved="false">
         <Preference
             android:key="source_code"
-            android:title="Source Code"
+            android:title="@string/source_code"
             android:summary="https://github.com/mamiiblt/instafel-updater"
             app:iconSpaceReserved="false" />
         <Preference
             android:key="create_issue"
-            android:title="Create Issue"
-            android:summary="Create a issue on Github for feedback!"
+            android:title="@string/create_issue"
+            android:summary="@string/create_issue_s"
             app:iconSpaceReserved="false" />
         <Preference
             android:key="app_version"
-            android:title="App Version"
-            android:summary="Version v1.0.0 (commit fa8c4c3)"
+            android:title="@string/app_version"
+            android:summary="_appVersion"
             app:iconSpaceReserved="false" />
     </PreferenceCategory>
 </PreferenceScreen>

@@ -1,12 +1,10 @@
-package me.mamiiblt.instafel.updater;
+package me.mamiiblt.instafel.updater.update;
 
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ServiceInfo;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
@@ -14,37 +12,22 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.preference.PreferenceManager;
-import androidx.work.ForegroundInfo;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOError;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
 import java.text.DecimalFormat;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.ServiceConfigurationError;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import me.mamiiblt.instafel.updater.utils.AppPreferences;
 import me.mamiiblt.instafel.updater.utils.LocalizationUtils;
@@ -221,7 +204,7 @@ public class UpdateWork extends Worker {
 
                                 // DOWNLOAD & INSTALL UPDATE
                                 uVersion = version;
-                                Intent fgServiceIntent = new Intent(ctx, InstafelUpdate.class);
+                                Intent fgServiceIntent = new Intent(ctx, InstafelUpdateService.class);
                                 fgServiceIntent.putExtra("file_url", b_download_url);
                                 fgServiceIntent.putExtra("version", uVersion);
                                 ctx.startService(fgServiceIntent);

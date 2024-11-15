@@ -1,14 +1,12 @@
 package me.mamiiblt.instafel.updater.fragments;
 
+import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,15 +14,11 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.List;
-
-import me.mamiiblt.instafel.updater.UpdateWorkHelper;
+import me.mamiiblt.instafel.updater.update.UpdateWorkHelper;
 import me.mamiiblt.instafel.updater.utils.LogUtils;
 import me.mamiiblt.instafel.updater.R;
-import me.mamiiblt.instafel.updater.utils.ShizukuInstaller;
 import me.mamiiblt.instafel.updater.utils.Utils;
 import rikka.shizuku.Shizuku;
 
@@ -57,15 +51,11 @@ public class InfoFragment extends Fragment {
         }
 
     }
-    private TextView viewShizukuStatus, viewArchitecture, viewIType, viewStatus, viewNextCheckStatus;
-    private MaterialCardView viewNextCheck;
+    private TextView viewShizukuStatus, viewArchitecture, viewIType, viewStatus;
     private Button viewStartBtn, viewStopBtn;
     private FloatingActionButton viewFab;
     private SharedPreferences sharedPreferences;
-    public final String STRING_AUTHORIZED = "✔ Authorized";
-    public final String STRING_UNAUTHORIZED = "❌ Unauthorized";
-    public final String STRING_RUNNING = "✔ Running";
-    public final String STRING_STOPPED = "❌ Stopped";
+    public String STRING_AUTHORIZED, STRING_UNAUTHORIZED, STRING_RUNNING, STRING_STOPPED;
     private LogUtils logUtils;
 
     @Override
@@ -77,11 +67,13 @@ public class InfoFragment extends Fragment {
        viewStatus = view.findViewById(R.id.statusTextView4);
        viewStartBtn = view.findViewById(R.id.startButton);
        viewStopBtn = view.findViewById(R.id.stopButton);
-       viewNextCheck = view.findViewById(R.id.cardView5);
-       viewNextCheckStatus = view.findViewById(R.id.statusTextView5);
        viewFab = view.findViewById(R.id.fab);
        logUtils = new LogUtils(getActivity());
 
+       Context ctx = getContext();
+       STRING_AUTHORIZED = ctx.getString(R.string.authorized);
+       STRING_UNAUTHORIZED = ctx.getString(R.string.unauthorized);
+       STRING_STOPPED = ctx.getString(R.string.stopped);
 
        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
        SharedPreferences.Editor prefEditor = sharedPreferences.edit();
@@ -110,7 +102,8 @@ public class InfoFragment extends Fragment {
        viewStartBtn.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view) {
-               logUtils.w("Updater started.");
+               logUtils.w(getContext().getString(R.string.upd_started));
+               Toast.makeText(ctx, getContext().getString(R.string.upd_started), Toast.LENGTH_SHORT).show();
                UpdateWorkHelper.scheduleWork(getActivity());
                updateUI();
            }
@@ -119,7 +112,8 @@ public class InfoFragment extends Fragment {
        viewStopBtn.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view) {
-               logUtils.w("Updater stopped.");
+               logUtils.w(getContext().getString(R.string.upd_stopped));
+               Toast.makeText(ctx, getContext().getString(R.string.upd_stopped), Toast.LENGTH_SHORT).show();
                UpdateWorkHelper.cancelWork(getActivity());
                updateUI();
            }
@@ -149,18 +143,16 @@ public class InfoFragment extends Fragment {
             public void onResult(boolean isActive) {
                 if (isActive) {
                     if (sharedPreferences.getBoolean("15m_rule", false)) {
-                        viewStatus.setText(STRING_RUNNING + " with 15 minute mode.");
+                        viewStatus.setText(getContext().getString(R.string.running, "15 " + getContext().getString(R.string.minute)));
                     } else {
-                        viewStatus.setText(STRING_RUNNING + " with " + sharedPreferences.getString("checker_interval", "NULL") + " hour mode.");
+                        viewStatus.setText(getContext().getString(R.string.running, sharedPreferences.getString("checker_interval", "NULL")));
                     }
                     viewStartBtn.setEnabled(false);
                     viewStopBtn.setEnabled(true);
-                    viewNextCheck.setVisibility(View.GONE);
                 } else {
                     viewStatus.setText(STRING_STOPPED);
                     viewStartBtn.setEnabled(true);
                     viewStopBtn.setEnabled(false);
-                    viewNextCheck.setVisibility(View.GONE);
                 }
             }
         });

@@ -10,7 +10,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Setup IFL Updater"
+        android:text="@string/setup_ifl"
         android:textSize="24sp"
         android:textStyle="bold"
         android:gravity="center"
@@ -19,7 +19,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Checker Architecture"
+        android:text="@string/checker_arch"
         android:textSize="18sp"
         android:layout_marginBottom="12dp"/>
 
@@ -45,7 +45,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Checker Installation Type"
+        android:text="@string/checker_itype"
         android:textSize="18sp"
         android:layout_marginTop="24dp"
         android:layout_marginBottom="12dp"/>
@@ -74,6 +74,6 @@
         android:onClick="next"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Continue"
+        android:text="@string/cont"
         android:layout_marginTop="24dp"/>
 </LinearLayout>
