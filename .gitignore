@@ -14,4 +14,5 @@
 .cxx
 local.properties
 .asdk
+keystore.jks
 .astd
