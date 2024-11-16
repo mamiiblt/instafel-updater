@@ -39,11 +39,13 @@ jobs:
         version=$(jq -r .version ./build_req.json)
         commit_id=$(git rev-parse --short HEAD)
         new_version="${version}-${commit_id}"
+        tag="v${version}"
         current_version_code=$(grep "versionCode" ./app/build.gradle.kts | sed 's/[^0-9]*\([0-9]*\).*/\1/')
         new_version_code=$((current_version_code + 1))
         
         echo "NEW_VERSION=${new_version}" >> $GITHUB_ENV
         echo "NEW_VERSION_CODE=${new_version_code}" >> $GITHUB_ENV
+        echo "TAG=${tag}" >> $GITHUB_ENV
         
     - name: Update versionName in build.gradle.kts
       run: |
@@ -63,10 +65,12 @@ jobs:
           RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
       run: ./gradlew assembleRelease --stacktrace
         
-    - name: Upload APK to GitHub Releases
-      uses: softprops/action-gh-release@v1
+    - name: Upload binaries to release
+      uses: svenstaro/upload-release-action@v2
       with:
-        tag_name: ${{ env.NEW_VERSION }}
-        files: ./app/build/outputs/apk/release/app-release.apk
-        name: New Release
-        token: ${{ secrets.GITHUB_TOKEN }}
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: ./app/build/outputs/apk/release/app-release.apk
+        asset_name: app-release.apk
+        tag: ${{ env.TAG }}
+        overwrite: true
+        body: Release ${{ env.TAG}}
