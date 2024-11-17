@@ -20,6 +20,11 @@
     <string name="shizuku_status">Shizuku Status</string>
     <string name="selected_arch">Checker Architecture</string>
     <string name="selected_installation_type">Checker Installation Type</string>
+    <string name="battery_restiriction">Battery Restiriction</string>
+    <string name="battery_restiricted">❌ Restricted</string>
+    <string name="battery_unrestiricted">✔ Unrestricted</string>
+    <string name="battery_dialog_title">Allow Unrestricted Mode</string>
+    <string name="battery_dialog_msg">In order for Instafel Updater to work properly, the battery mode of the application must not be restricted.</string>
     <string name="updater_status">Updater Status</string>
     <string name="start">Start</string>
     <string name="stop">Stop</string>
@@ -29,6 +34,15 @@
     <string name="stopped">❌ Stopped</string>
     <string name="authorized">✔ Authorized</string>
     <string name="unauthorized">❌ Unauthorized</string>
+    <string name="not_installed">❌ Shizuku Not Installed</string>
+    <string name="start_service">❌ Shizuku is Not Running</string>
+    <string name="please_start_shizuku">Please start Shizuku from app</string>
+    <string name="please_install_shizuku">Please install Shizuku from Play Store</string>
+    <string name="please_give_permission">Please authorize Instafel Updater on Shizuku</string>
+    <string name="please_allow_unrestiracted">Please set app battery restiraction mode to unrestiracted mode</string>
+    <string name="dialog_title">Grant Permission</string>
+    <string name="dialog_desc">Instafel Updater needs Notification and Shizuku permissions for running normally.</string>
+    <string name="dialog_ok">Okay</string>
     <string name="hour">hour</string>
     <string name="minute">minute</string>
     <string name="upd_started">Updater started</string>
@@ -36,7 +50,7 @@
 
     <!-- Code Strings -->
     <string name="runtime_log_cleared">Runtime log cleared.</string>
-    <string name="work_restarted">Updater is restarted.</string>
+    <string name="work_restarted">Updater is restarted</string>
 
     <!-- Notification Strings -->
     <string name="n1_downloading">Downloading Update</string>
@@ -69,10 +83,13 @@
     <string name="hour12_rule">12 Hour Rule</string>
     <string name="hour12_rule_s">Allows you to install the update after released 12 hours</string>
     <string name="source_code">Source Code</string>
+    <string name="instafel_website">Instafel Website</string>
     <string name="create_issue">Create Issue</string>
     <string name="create_issue_s">Create a issue on GitHub for feedback!</string>
     <string name="app_version">App Version</string>
     <string name="app_version_s">Version v%1$s (commit %2$s)</string>
     <string name="language">Langauge</string>
     <string name="language_s">Set the language of app</string>
+    <string name="developed_by">Developed with ❤️ by mamiiblt</string>
+    <string name="about_app">About</string>
 </resources>

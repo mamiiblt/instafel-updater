@@ -140,83 +140,80 @@ public class UpdateWork extends Worker {
 
                 if (versionName != null) {
                     if (versionName.equals("NOT_INSTALLED")) {
-                        sendError("IG (Instafel / Instagram) is not installed.");
+                        sendError("IG (Instafel / Instagram) is not installed. Please install from https://instafel.mamiiblt.me");
                     } else {
                         logUtils.w("Installed IG version is " + versionName);
+                        try {
+                            OkHttpClient client = new OkHttpClient();
+                            String urlPart;
+                            if (arch.equals("arm64")) {
+                                urlPart = "arm64-v8a";
+                            } else {
+                                urlPart = "armeabi-v7a";
+                            }
+                            Request request = new Request.Builder()
+                                    .url("https://api.github.com/repos/mamiiblt/instafel_release_" + urlPart + "/releases/latest")
+                                    .build();
+                            Response response = client.newCall(request).execute();
+                            if (response.isSuccessful()) {
+                                JSONObject res = new JSONObject(response.body().string());
+                                String version = res.getString("body").split("\n")[1].split("v")[1].split(" ")[0];
+                                if (versionName.equals(version)) {
+                                    logUtils.w("Update not needed, app is up-to-date.");
+                                    return Result.success();
+                                } else {
+                                    logUtils.w("New version found " + version);
+                                    if (appPreferences.isAllow12HourMode()) {
+                                        String publishTs = res.getString("published_at");
+                                        OffsetDateTime parsedDateTime = OffsetDateTime.parse(publishTs, DateTimeFormatter.ISO_DATE_TIME);
+                                        OffsetDateTime currentDateTime = OffsetDateTime.now(ZoneOffset.UTC);
+                                        Duration duration = Duration.between(parsedDateTime, currentDateTime);
+
+                                        if (duration.toHours() >= 12) {
+                                            // allow
+                                        } else {
+                                            logUtils.w("Duration is " + duration.getSeconds() + ", so update stopped.");
+                                            return Result.success();
+                                        }
+                                    }
+
+                                    // Start Shizuku User Service for run commands
+
+                                    logUtils.w("Starting UserService");
+                                    ShizukuInstaller.ensureUserService(ctx);
+
+                                    JSONArray assets = res.getJSONArray("assets");
+
+                                    String b_download_url = null;
+
+                                    for (int i = 0; i < assets.length(); i++) {
+                                        JSONObject asset = assets.getJSONObject(i);
+                                        if (asset.getString("name").contains("_" + type + "_")) {
+                                            b_download_url = asset.getString("browser_download_url");
+                                        }
+                                    }
+
+                                    if (b_download_url != null) {
+
+                                        // DOWNLOAD & INSTALL UPDATE
+                                        uVersion = version;
+                                        Intent fgServiceIntent = new Intent(ctx, InstafelUpdateService.class);
+                                        fgServiceIntent.putExtra("file_url", b_download_url);
+                                        fgServiceIntent.putExtra("version", uVersion);
+                                        ctx.startService(fgServiceIntent);
+                                    } else {
+                                        sendError("Updater can't found update asset!");
+                                    }
+                                }
+                            } else {
+                                sendError("Response code is not 200 (OK).");
+                            }
+                        } catch (Exception e) {
+                            sendError("Error while sending / reading API request");
+                        }
                     }
                 } else {
                     sendError("versionCode is NULL");
-                }
-
-                // Send API Request
-
-                try {
-                    OkHttpClient client = new OkHttpClient();
-                    String urlPart;
-                    if (arch.equals("arm64")) {
-                        urlPart = "arm64-v8a";
-                    } else {
-                        urlPart = "armeabi-v7a";
-                    }
-                    Request request = new Request.Builder()
-                            .url("https://api.github.com/repos/mamiiblt/instafel_release_" + urlPart + "/releases/latest")
-                            .build();
-                    Response response = client.newCall(request).execute();
-                    if (response.isSuccessful()) {
-                        JSONObject res = new JSONObject(response.body().string());
-                        String version = res.getString("body").split("\n")[1].split("v")[1].split(" ")[0];
-                        if (versionName.equals(version)) {
-                            logUtils.w("Update not needed, app is up-to-date.");
-                            return Result.success();
-                        } else {
-                            logUtils.w("New version found " + version);
-                            if (appPreferences.isAllow12HourMode()) {
-                                String publishTs = res.getString("published_at");
-                                OffsetDateTime parsedDateTime = OffsetDateTime.parse(publishTs, DateTimeFormatter.ISO_DATE_TIME);
-                                OffsetDateTime currentDateTime = OffsetDateTime.now(ZoneOffset.UTC);
-                                Duration duration = Duration.between(parsedDateTime, currentDateTime);
-
-                                if (duration.toHours() >= 12) {
-                                    // allow
-                                } else {
-                                    logUtils.w("Duration is " + duration.getSeconds() + ", so update stopped.");
-                                    return Result.success();
-                                }
-                            }
-
-                            // Start Shizuku User Service for run commands
-
-                            logUtils.w("Starting UserService");
-                            ShizukuInstaller.ensureUserService(ctx);
-
-                            JSONArray assets = res.getJSONArray("assets");
-
-                            String b_download_url = null;
-
-                            for (int i = 0; i < assets.length(); i++) {
-                                JSONObject asset = assets.getJSONObject(i);
-                                if (asset.getString("name").contains("_" + type + "_")) {
-                                    b_download_url = asset.getString("browser_download_url");
-                                }
-                            }
-
-                            if (b_download_url != null) {
-
-                                // DOWNLOAD & INSTALL UPDATE
-                                uVersion = version;
-                                Intent fgServiceIntent = new Intent(ctx, InstafelUpdateService.class);
-                                fgServiceIntent.putExtra("file_url", b_download_url);
-                                fgServiceIntent.putExtra("version", uVersion);
-                                ctx.startService(fgServiceIntent);
-                            } else {
-                                sendError("Updater can't found update asset!");
-                            }
-                        }
-                    } else {
-                        sendError("Response code is not 200 (OK).");
-                    }
-                } catch (Exception e) {
-                    sendError("Error while sending / reading API request");
                 }
             } else {
                 logUtils.w("Update couldn't checked because mobile data is enabled.");

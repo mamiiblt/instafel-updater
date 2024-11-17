@@ -22,6 +22,7 @@ import me.mamiiblt.instafel.updater.R;
 import me.mamiiblt.instafel.updater.update.UpdateWorkHelper;
 import me.mamiiblt.instafel.updater.utils.LocalizationUtils;
 import me.mamiiblt.instafel.updater.utils.MaterialListPreference;
+import me.mamiiblt.instafel.updater.utils.Utils;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
     private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
@@ -98,6 +99,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         String version = versionName[0];
         String tag = versionName[1];
         appVersion.setSummary(getActivity().getString(R.string.app_version_s, version, tag));
+        appVersion.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(@NonNull Preference preference) {
+                Utils.showAppInfoDialog(getActivity());
+                return false;
+            }
+        });
     }
 
     @Override

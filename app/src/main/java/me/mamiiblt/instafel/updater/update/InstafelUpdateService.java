@@ -65,13 +65,7 @@ public class InstafelUpdateService extends Service {
         this.df = new DecimalFormat("#.##");
 
         try {
-            File f = new File(ctx.getExternalFilesDir(null), "downloaded_apks");
-            if (!f.exists()) {
-                f.mkdirs();
-            } else {
-                f.delete();
-                f.mkdirs();
-            }
+            File f = recreateFilesDir();
 
             File ifl_update_file = new File(f.getPath(), "update.apk");
             new Thread(() -> {
@@ -130,6 +124,17 @@ public class InstafelUpdateService extends Service {
         }
     }
 
+    private File recreateFilesDir() {
+        File f = new File(ctx.getExternalFilesDir(null), "downloaded_apks");
+        if (!f.exists()) {
+            f.mkdirs();
+        } else {
+            f.delete();
+            f.mkdirs();
+        }
+        return f;
+    }
+
     private static final int PROGRESS_UPDATE_INTERVAL = 1200;
     private long lastUpdateTime = 0;
     private void updateStatus(int prog) {
@@ -163,6 +168,7 @@ public class InstafelUpdateService extends Service {
                         if (updateLog.trim().equals("Success")) {
                             logUtils.w("Update installed.");
                             ShizukuInstaller.runCommand(ctx, "rm -r /data/local/tmp/INSTAFEL_UPDATE.apk");
+                            recreateFilesDir();
                             logUtils.w("Downloaded apk & temp apk removed");
                             notifyUpdateInstalled();
                             logUtils.w("Instafel succesfully updated.");

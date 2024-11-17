@@ -1,12 +1,18 @@
 package me.mamiiblt.instafel.updater.fragments;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +20,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import me.mamiiblt.instafel.updater.MainActivity;
 import me.mamiiblt.instafel.updater.update.UpdateWorkHelper;
 import me.mamiiblt.instafel.updater.utils.LogUtils;
 import me.mamiiblt.instafel.updater.R;
@@ -51,11 +59,11 @@ public class InfoFragment extends Fragment {
         }
 
     }
-    private TextView viewShizukuStatus, viewArchitecture, viewIType, viewStatus;
+    private TextView viewShizukuStatus, viewArchitecture, viewIType, viewStatus, viewBatteryStatus;
     private Button viewStartBtn, viewStopBtn;
     private FloatingActionButton viewFab;
     private SharedPreferences sharedPreferences;
-    public String STRING_AUTHORIZED, STRING_UNAUTHORIZED, STRING_RUNNING, STRING_STOPPED;
+    public String STRING_AUTHORIZED, STRING_UNAUTHORIZED, STRING_STOPPED, STRING_NOT_INSTALLED, STRING_START_SERVICE, STRING_RESTRICTED, STRING_UNRESTICTED;
     private LogUtils logUtils;
 
     @Override
@@ -67,6 +75,7 @@ public class InfoFragment extends Fragment {
        viewStatus = view.findViewById(R.id.statusTextView4);
        viewStartBtn = view.findViewById(R.id.startButton);
        viewStopBtn = view.findViewById(R.id.stopButton);
+       viewBatteryStatus = view.findViewById(R.id.statusTextView5);
        viewFab = view.findViewById(R.id.fab);
        logUtils = new LogUtils(getActivity());
 
@@ -74,6 +83,10 @@ public class InfoFragment extends Fragment {
        STRING_AUTHORIZED = ctx.getString(R.string.authorized);
        STRING_UNAUTHORIZED = ctx.getString(R.string.unauthorized);
        STRING_STOPPED = ctx.getString(R.string.stopped);
+       STRING_NOT_INSTALLED = ctx.getString(R.string.not_installed);
+       STRING_START_SERVICE = ctx.getString(R.string.start_service);
+       STRING_RESTRICTED = ctx.getString(R.string.battery_restiricted);
+       STRING_UNRESTICTED = ctx.getString(R.string.battery_unrestiricted);
 
        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
        SharedPreferences.Editor prefEditor = sharedPreferences.edit();
@@ -81,18 +94,45 @@ public class InfoFragment extends Fragment {
        viewArchitecture.setText(sharedPreferences.getString("checker_arch", "NULL"));
        viewIType.setText(sharedPreferences.getString("checker_type", "NULL"));
 
-       if (Utils.hasShizukuPermission()) {
-           viewShizukuStatus.setText(STRING_AUTHORIZED);
+       if (Utils.getBatteryRestrictionStatus(getActivity())) {
+           viewBatteryStatus.setText(STRING_RESTRICTED);
+           view.findViewById(R.id.battery_status).setOnClickListener(new View.OnClickListener() {
+               @Override
+               public void onClick(View view) {
+                   Utils.showBatteryDialog(getActivity());
+               }
+           });
        } else {
-           viewShizukuStatus.setText(STRING_UNAUTHORIZED);
+           viewBatteryStatus.setText(STRING_UNRESTICTED);
+       }
+
+       if (Utils.isShizukuInstalled(getActivity())) {
+           if (Shizuku.pingBinder()) {
+               if (Utils.hasShizukuPermission()) {
+                   viewShizukuStatus.setText(STRING_AUTHORIZED);
+               } else {
+                   viewShizukuStatus.setText(STRING_UNAUTHORIZED);
+                   view.findViewById(R.id.shizuku_status).setOnClickListener(new View.OnClickListener() {
+                       @Override
+                       public void onClick(View view) {
+                           if (Utils.hasShizukuPermission()) {
+                               viewShizukuStatus.setText(STRING_AUTHORIZED);
+                           } else {
+                               Shizuku.requestPermission(100);
+                           }
+                       }
+                   });
+               }
+           } else {
+               Toast.makeText(ctx, ctx.getString(R.string.please_start_shizuku), Toast.LENGTH_SHORT).show();
+               viewShizukuStatus.setText(STRING_START_SERVICE);
+           }
+       } else {
+           viewShizukuStatus.setText(STRING_NOT_INSTALLED);
            view.findViewById(R.id.shizuku_status).setOnClickListener(new View.OnClickListener() {
                @Override
                public void onClick(View view) {
-                    if (Utils.hasShizukuPermission()) {
-                        viewShizukuStatus.setText(STRING_AUTHORIZED);
-                    } else {
-                        Shizuku.requestPermission(100);
-                    }
+                    Utils.openPlayStore(getActivity());
                }
            });
        }
@@ -102,10 +142,30 @@ public class InfoFragment extends Fragment {
        viewStartBtn.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view) {
-               logUtils.w(getContext().getString(R.string.upd_started));
-               Toast.makeText(ctx, getContext().getString(R.string.upd_started), Toast.LENGTH_SHORT).show();
-               UpdateWorkHelper.scheduleWork(getActivity());
-               updateUI();
+               if (!Utils.getBatteryRestrictionStatus(getActivity())) {
+                   if (Utils.isShizukuInstalled(getActivity())) {
+                       if (Shizuku.pingBinder()) {
+                           if (Utils.hasShizukuPermission()) {
+                               logUtils.w(getContext().getString(R.string.upd_started));
+                               Toast.makeText(ctx, getContext().getString(R.string.upd_started), Toast.LENGTH_SHORT).show();
+                               UpdateWorkHelper.scheduleWork(getActivity());
+                               updateUI();
+                           } else {
+                               Toast.makeText(ctx, ctx.getString(R.string.please_give_permission), Toast.LENGTH_SHORT).show();
+                               Utils.openShizuku(ctx);
+                           }
+                       } else {
+                           Toast.makeText(ctx, ctx.getString(R.string.please_start_shizuku), Toast.LENGTH_SHORT).show();
+                           Utils.openShizuku(ctx);
+                       }
+                   } else {
+                       Toast.makeText(ctx, ctx.getString(R.string.please_install_shizuku), Toast.LENGTH_SHORT).show();
+                       Utils.openPlayStore(ctx);
+                   }
+               } else {
+                   Toast.makeText(ctx, ctx.getString(R.string.please_allow_unrestiracted), Toast.LENGTH_SHORT).show();
+                   Utils.showBatteryDialog(ctx);
+               }
            }
        });
 
@@ -123,6 +183,7 @@ public class InfoFragment extends Fragment {
            @Override
            public void onClick(View view) {
                 UpdateWorkHelper.restartWork(getActivity());
+               Toast.makeText(getActivity(), ctx.getString(R.string.work_restarted), Toast.LENGTH_SHORT).show();
            }
        });
        viewFab.setOnLongClickListener(new View.OnLongClickListener() {

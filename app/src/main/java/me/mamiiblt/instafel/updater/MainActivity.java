@@ -1,6 +1,7 @@
 package me.mamiiblt.instafel.updater;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -27,6 +28,7 @@ import androidx.preference.PreferenceManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.color.DynamicColors;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import me.mamiiblt.instafel.updater.utils.LocalizationUtils;
 import me.mamiiblt.instafel.updater.utils.LogUtils;
@@ -60,17 +62,16 @@ public class MainActivity extends AppCompatActivity {
             prefsEditor.apply();
         }
 
-        if (prefsApp.getBoolean("material_you", true) == true) {
+        if (prefsApp.getBoolean("material_you", true)) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 DynamicColors.applyToActivityIfAvailable(this);
-            } else {
-                Toast.makeText(this, "Your android version is below 12", Toast.LENGTH_SHORT).show();
             }
         } else {
             setTheme(R.style.Base_Theme_InstafelUpdater);
         }
 
         EdgeToEdge.enable(this);
+
         setContentView(R.layout.activity_main);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -84,17 +85,22 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 105);
-                } else {
-                    Shizuku.addRequestPermissionResultListener(REQUEST_PERMISSION_RESULT_LISTENER);
-                    if (!Utils.hasShizukuPermission()) { // if permission not granted
-                        logUtils.w("Shizuku permission is not granted, requesting permission.");
-                        Shizuku.requestPermission(100);
-                    }
+            if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    new MaterialAlertDialogBuilder(this)
+                            .setTitle(this.getString(R.string.dialog_title))
+                            .setMessage(this.getString(R.string.dialog_desc))
+                            .setPositiveButton(this.getString(R.string.dialog_ok), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 105);
+                                }
+                            })
+                            .setCancelable(false)
+                            .show();
                 }
             }
+
         }
 
         titleView = findViewById(R.id.title);
@@ -124,6 +130,10 @@ public class MainActivity extends AppCompatActivity {
             if (granted) {
                 recreate();
                 logUtils.w("Shizuku permission is granted.");
+
+                if (Utils.getBatteryRestrictionStatus(this)) {
+                    Utils.showBatteryDialog(this);
+                }
             } else {
                 logUtils.w("Shizuku permission is rejected.");
                 Utils.showDialog(this, this.getString(R.string.permission_rejected), this.getString(R.string.perm_rejected_desc));
@@ -136,8 +146,24 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 105) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (Utils.isShizukuInstalled(MainActivity.this)) {
+                    if (Shizuku.pingBinder()) {
+                        Shizuku.addRequestPermissionResultListener(REQUEST_PERMISSION_RESULT_LISTENER);
+                        if (!Utils.hasShizukuPermission()) {
+                            logUtils.w("Shizuku permission is not granted, requesting permission.");
+                            Shizuku.requestPermission(100);
+                        }
+                    } else {
+                        Toast.makeText(MainActivity.this, MainActivity.this.getString(R.string.please_start_shizuku), Toast.LENGTH_SHORT).show();
+                        Utils.openShizuku(MainActivity.this);
+                    }
+                } else {
+                    Toast.makeText(MainActivity.this, MainActivity.this.getString(R.string.please_install_shizuku), Toast.LENGTH_SHORT).show();
+                    Utils.openPlayStore(MainActivity.this);
+                }
+
             } else {
-                Toast.makeText(this, this.getString(R.string.perm_rejected_desc), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Please allow notification permission from App Info", Toast.LENGTH_SHORT).show();
                 finish();
             }
         }

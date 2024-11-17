@@ -32,11 +32,9 @@ public class SetupActivity extends AppCompatActivity {
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         editor = preferences.edit();
 
-        if (preferences.getBoolean("material_you", true) == true) {
+        if (preferences.getBoolean("material_you", true)) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 DynamicColors.applyToActivityIfAvailable(this);
-            } else {
-                Toast.makeText(this, "Your android version is below 12", Toast.LENGTH_SHORT).show();
             }
         } else {
             setTheme(R.style.Base_Theme_InstafelUpdater);
