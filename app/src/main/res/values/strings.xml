@@ -92,4 +92,14 @@
     <string name="language_s">Set the language of app</string>
     <string name="developed_by">Developed with ❤️ by mamiiblt</string>
     <string name="about_app">About</string>
+    <string name="advanced_userservice">Advanced UserService Mode</string>
+    <string name="advanced_userservice_s">Updater will try to call if UserService is not activated before install</string>
+    <string name="use_instafel">Use Instafel API (Recommended)</string>
+    <string name="use_instafel_s">Use new Instafel API instead GitHub API for checking updates.</string>
+    <string name="crash_logs">Save Crash Logs</string>
+    <string name="crash_logs_s">Logger will be write every crash into daily log.</string>
+    <string name="disable_error">Disable Warning Notifications</string>
+    <string name="disable_error_s">Disable non critical error notifications</string>
+    <string name="updater_guide">Updater Guide</string>
+    <string name="updater_guide_s">Learn how to use Instafel Updater</string>
 </resources>

@@ -81,4 +81,14 @@
     <string name="developed_by">mamiiblt tarafından ❤️ ile geliştirilmiştir</string>
     <string name="about_app">About</string>
     <string name="instafel_website">Instafel Websitesi</string>
+    <string name="advanced_userservice">Gelişmiş UserService Modu</string>
+    <string name="advanced_userservice_s">Güncelleyici apkyı kurmadan önce 5 kez UserService\'yi kontrol eder.</string>
+    <string name="use_instafel">Instafel API\'yi Kullan (Önerilir)</string>
+    <string name="use_instafel_s">Güncelleme kontrolü için GitHub API\'si yerine yeni Instafel API\'sini kullanır.</string>
+    <string name="crash_logs">Hataları Kaydet</string>
+    <string name="crash_logs_s">Logcu her hatayı günlüğe yazar.</string>
+    <string name="disable_error">Uyarı Bildirimlerini Kapat</string>
+    <string name="disable_error_s">Çok önemli olmayan uyarılar için bildirim göndermez.</string>
+    <string name="updater_guide">Updater Kılavuzu</string>
+    <string name="updater_guide_s">Instafel Updater\'i nasıl kullanacağınızı öğrenin</string>
 </resources>

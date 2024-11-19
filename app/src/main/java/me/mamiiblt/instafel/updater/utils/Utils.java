@@ -63,7 +63,7 @@ public class Utils {
         new MaterialAlertDialogBuilder(ctx)
                 .setTitle(ctx.getString(R.string.about_app))
                 .setMessage("version: v" + BuildConfig.VERSION_NAME + "-" + BuildConfig.BUILD_TYPE +
-                        "\nsdk: " + Build.VERSION.SDK_INT + "(" + Build.VERSION.RELEASE + ")" +
+                        "\nsdk: API " + Build.VERSION.SDK_INT + " (" + Build.VERSION.RELEASE + ")" +
                         "\ndevice: " + Build.DEVICE +
                         "\nproduct: " +  Build.PRODUCT +
                         "\nbuild_id: " + Build.ID  +

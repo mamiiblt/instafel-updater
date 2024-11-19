@@ -147,7 +147,6 @@ public class InfoFragment extends Fragment {
                        if (Shizuku.pingBinder()) {
                            if (Utils.hasShizukuPermission()) {
                                logUtils.w(getContext().getString(R.string.upd_started));
-                               Toast.makeText(ctx, getContext().getString(R.string.upd_started), Toast.LENGTH_SHORT).show();
                                UpdateWorkHelper.scheduleWork(getActivity());
                                updateUI();
                            } else {
@@ -173,7 +172,6 @@ public class InfoFragment extends Fragment {
            @Override
            public void onClick(View view) {
                logUtils.w(getContext().getString(R.string.upd_stopped));
-               Toast.makeText(ctx, getContext().getString(R.string.upd_stopped), Toast.LENGTH_SHORT).show();
                UpdateWorkHelper.cancelWork(getActivity());
                updateUI();
            }

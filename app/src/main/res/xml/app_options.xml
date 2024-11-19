@@ -73,6 +73,30 @@
             app:iconSpaceReserved="false"
             android:summary="@string/hour12_rule_s"
             android:defaultValue="false" />
+        <SwitchPreferenceCompat
+            android:key="advanced_userservice_mode"
+            android:title="@string/advanced_userservice"
+            android:summary="@string/advanced_userservice_s"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
+        <SwitchPreferenceCompat
+            android:key="use_instafel_api"
+            android:title="@string/use_instafel"
+            android:defaultValue="true"
+            app:iconSpaceReserved="false"
+            android:summary="@string/use_instafel_s" />
+        <SwitchPreferenceCompat
+            android:key="crash_logger"
+            android:title="@string/crash_logs"
+            android:defaultValue="true"
+            app:iconSpaceReserved="false"
+            android:summary="@string/crash_logs_s" />
+        <SwitchPreferenceCompat
+            android:key="disable_error_notifications"
+            android:title="@string/disable_error"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false"
+            android:summary="@string/disable_error_s" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/cname_about" app:iconSpaceReserved="false">
@@ -80,6 +104,11 @@
             android:key="source_code"
             android:title="@string/source_code"
             android:summary="https://github.com/mamiiblt/instafel-updater"
+            app:iconSpaceReserved="false" />
+        <Preference
+            android:key="updater_guide"
+            android:title="@string/updater_guide"
+            android:summary="@string/updater_guide_s"
             app:iconSpaceReserved="false" />
         <Preference
             android:key="create_issue"

@@ -94,6 +94,16 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             }
         });
 
+        Preference updaterGuide = findPreference("updater_guide");
+        updaterGuide.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(@NonNull Preference preference) {
+                Intent intent = new Intent("android.intent.action.VIEW", Uri.parse("https://mamiiblt.me/_makaleler/how_i_can_use_instafel_updater"));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                getContext().startActivity(intent);
+                return false;
+            }
+        });
         Preference appVersion = findPreference("app_version");
         String[] versionName = BuildConfig.VERSION_NAME.split("-");
         String version = versionName[0];
