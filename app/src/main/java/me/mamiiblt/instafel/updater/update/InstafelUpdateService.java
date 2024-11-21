@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.IBinder;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -116,6 +117,9 @@ public class InstafelUpdateService extends Service {
                 } catch (Exception e) {
                     e.printStackTrace();
                     logUtils.w("Error while downloading update (IO). [" + e.getMessage() + "]");
+                    logUtils.w("MSG: " + e.getMessage());
+                    logUtils.w("CLASS: " + e.getClass().toString());
+                    logUtils.w("TRACE: " + Log.getStackTraceString(e));
                     errorOccured = true;
                 } finally {
                     if (!errorOccured) {
@@ -129,6 +133,9 @@ public class InstafelUpdateService extends Service {
 
         } catch (Exception e) {
             logUtils.w("Error while ensuring connection.");
+            logUtils.w("MSG: " + e.getMessage());
+            logUtils.w("CLASS: " + e.getClass().toString());
+            logUtils.w("TRACE: " + Log.getStackTraceString(e));
             notifyError( "An error occured when downloading update");
             e.printStackTrace();
         }
@@ -192,6 +199,9 @@ public class InstafelUpdateService extends Service {
                 }
             } catch (Exception e) {
                 logUtils.w("Installation method crashed.");
+                logUtils.w("MSG: " + e.getMessage());
+                logUtils.w("CLASS: " + e.getClass().toString());
+                logUtils.w("TRACE: " + Log.getStackTraceString(e));
                 notifyError("An error occurred when installing update (CRASH)");
             }
         }).start();
@@ -219,7 +229,7 @@ public class InstafelUpdateService extends Service {
     private void notifyStatus(int prog, String finalFormattedDownloadedSize) {
         notificationBuilder
                 .setContentTitle(ctx.getString(R.string.n1_downloading))
-                .setContentText(prog + "% (" + finalFormattedDownloadedSize + "/" + formattedFileSize +" MB)")
+                .setContentText(prog + "% (" + finalFormattedDownloadedSize + " / " + formattedFileSize +" MB)")
                 .setProgress(100, prog, false);
         notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
     }

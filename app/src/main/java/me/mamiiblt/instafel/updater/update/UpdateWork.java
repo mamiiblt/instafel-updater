@@ -87,7 +87,7 @@ public class UpdateWork extends Worker {
             arch = "arm32";
         } else {
             arch = null;
-            sendError("You selected invalid arch, work is stopped.", true);
+            sendError("You selected invalid arch, work is stopped.", true, null);
         }
 
         if (prefType.equals("Unclone")) {
@@ -96,7 +96,7 @@ public class UpdateWork extends Worker {
             type = "c";
         } else {
             type = null;
-            sendError("You selected invalid installation type, work is stopped.", true);
+            sendError("You selected invalid installation type, work is stopped.", true, null);
         }
 
         logUtils.w("Work arch is " + arch + " and type is " + type);
@@ -146,7 +146,7 @@ public class UpdateWork extends Worker {
 
                     if (versionName != null) {
                         if (versionName.equals("NOT_INSTALLED")) {
-                            sendError("IG (Instafel / Instagram) is not installed. Please install from https://instafel.mamiiblt.me", false);
+                            sendError("IG (Instafel / Instagram) is not installed. Please install from https://instafel.mamiiblt.me", false, null);
                         } else {
                             logUtils.w("Installed IG version is " + versionName);
                             try {
@@ -172,12 +172,13 @@ public class UpdateWork extends Worker {
 
                                     String version;
                                     String published_at;
+                                    JSONObject res;
                                     if (appPreferences.isUseInstafelApi()) {
-                                        JSONObject res = new JSONObject(response.body().string());
+                                        res = new JSONObject(response.body().string());
                                         version = res.getString("ig_version");
                                         published_at = res.getString("published_at");
                                     } else {
-                                        JSONObject res = new JSONObject(response.body().string());
+                                        res = new JSONObject(response.body().string());
                                         version = res.getString("body").split("\n")[1].split("v")[1].split(" ")[0];
                                         published_at = res.getString("published_at");
                                     }
@@ -209,14 +210,12 @@ public class UpdateWork extends Worker {
 
                                         String b_download_url = null;
                                         if (appPreferences.isUseInstafelApi()) {
-                                            JSONObject res = new JSONObject(response.body().string());
                                             if (type.equals("uc")) {
                                                 b_download_url = res.getString("download_link_uc");
                                             } else {
                                                 b_download_url = res.getString("download_link_c");
                                             }
                                         } else {
-                                            JSONObject res = new JSONObject(response.body().string());
                                             JSONArray assets = res.getJSONArray("assets");
                                             for (int i = 0; i < assets.length(); i++) {
                                                 JSONObject asset = assets.getJSONObject(i);
@@ -237,18 +236,18 @@ public class UpdateWork extends Worker {
                                             fgServiceIntent.putExtra("disable_error_log", appPreferences.isDisable_error_notifications());
                                             ctx.startService(fgServiceIntent);
                                         } else {
-                                            sendError("Updater can't found update asset!", true);
+                                            sendError("Updater can't found update asset!", true, null);
                                         }
                                     }
                                 } else {
-                                    sendError("Response code is not 200 (" + response.code() +").", false);
+                                    sendError("Response code is not 200 (" + response.code() +").", false, null);
                                 }
                             } catch (Exception e) {
-                                sendError("Error while sending / reading API request", true);
+                                sendError("Error while sending / reading API request", true, e);
                             }
                         }
                     } else {
-                        sendError("versionCode is NULL", true);
+                        sendError("versionCode is NULL", true, null);
                     }
                 } else {
                     logUtils.w("Update couldn't checked because mobile data is enabled.");
@@ -259,7 +258,10 @@ public class UpdateWork extends Worker {
         } catch (Exception e) {
             e.printStackTrace();
             if (appPreferences.isCrashLoggerEnabled()) {
-                logUtils.w("CATCH: " + e.getMessage());
+                logUtils.w("ERROR: " + e.getMessage());
+                logUtils.w("MSG: " + e.getMessage());
+                logUtils.w("CLASS: " + e.getClass().toString());
+                logUtils.w("TRACE: " + Log.getStackTraceString(e));
             }
         }
 
@@ -297,7 +299,7 @@ public class UpdateWork extends Worker {
         return false;
     }
 
-    private void sendError(String message, boolean priority) {
+    private void sendError(String message, boolean priority, Exception e) {
         new Handler(Looper.getMainLooper()).post(() -> {
 
             // WRITE LOG
@@ -305,7 +307,14 @@ public class UpdateWork extends Worker {
             LogUtils logUtils = new LogUtils(getApplicationContext());
             logUtils.w("ERROR: " + message);
 
+            if (e != null) {
+                logUtils.w("MSG: " + e.getMessage());
+                logUtils.w("CLASS: " + e.getClass().toString());
+                logUtils.w("TRACE: " + Log.getStackTraceString(e));
+            }
+
             // SHOW NOTIFICATION OR TOAST
+
 
             if (appPreferences.isDisable_error_notifications()) {
                 if (priority) {
@@ -338,6 +347,7 @@ public class UpdateWork extends Worker {
                     .setAutoCancel(true);
 
             notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
+
         } else {
             Toast.makeText(ctx, message, Toast.LENGTH_SHORT).show();
         }
