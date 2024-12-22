@@ -13,7 +13,6 @@
     <queries>
         <package android:name="com.instagram.android" />
         <package android:name="com.instafel.android" />
-        <package android:name="moe.shizuku.privileged.api" />
     </queries>
 
     <application
@@ -27,14 +26,6 @@
         android:supportsRtl="false"
         android:theme="@style/Theme.InstafelUpdater"
         tools:targetApi="34">
-
-        <provider
-            android:name="rikka.shizuku.ShizukuProvider"
-            android:authorities="${applicationId}.shizuku"
-            android:multiprocess="false"
-            android:enabled="true"
-            android:exported="true"
-            android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
 
         <activity
             android:name=".SetupActivity"

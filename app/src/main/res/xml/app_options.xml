@@ -74,12 +74,6 @@
             android:summary="@string/hour12_rule_s"
             android:defaultValue="false" />
         <SwitchPreferenceCompat
-            android:key="advanced_userservice_mode"
-            android:title="@string/advanced_userservice"
-            android:summary="@string/advanced_userservice_s"
-            android:defaultValue="false"
-            app:iconSpaceReserved="false" />
-        <SwitchPreferenceCompat
             android:key="use_instafel_api"
             android:title="@string/use_instafel"
             android:defaultValue="true"

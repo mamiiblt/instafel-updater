@@ -24,30 +24,6 @@ import me.mamiiblt.instafel.updater.R;
 import rikka.shizuku.Shizuku;
 
 public class Utils {
-
-    public static boolean status = false;
-
-    public static boolean hasShizukuPermission() {
-        if (Shizuku.isPreV11()) {
-            return false;
-        }
-
-        return Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED;
-    }
-
-    public static boolean isShizukuInstalled(Activity activity) {
-        if (getAppVersionCode(activity, "moe.shizuku.privileged.api").equals("NOT_INSTALLED")) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    public static void openShizuku(Context ctx) {
-        Intent intent = ctx.getPackageManager().getLaunchIntentForPackage("moe.shizuku.privileged.api");
-        ctx.startActivity(intent);
-    }
-
     public static void showBatteryDialog(Context ctx) {
         if (Utils.getBatteryRestrictionStatus(ctx)) {
             new MaterialAlertDialogBuilder(ctx)
@@ -95,18 +71,8 @@ public class Utils {
         }
     }
 
-    public static void openPlayStore(Context ctx) {
-        Intent intent = new Intent("android.intent.action.VIEW", Uri.parse("https://play.google.com/store/apps/details?id=moe.shizuku.privileged.api"));
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        ctx.startActivity(intent);
-    }
-
-
     public static String getAppVersionCode(Context ctx, String packageName) {
         try {
-            /*PackageManager packageManager = ctx.getPackageManager();
-            PackageInfo packageInfo = packageManager.getPackageInfo(packageName, 0);
-            Log.v("IFL", "p: " + packageName);*/
             PackageManager pm = ctx.getPackageManager();
             PackageInfo pInfo = pm.getPackageInfo(packageName, PackageManager.GET_META_DATA);
             return pInfo.versionName;
@@ -115,15 +81,4 @@ public class Utils {
             return "NOT_INSTALLED";
         }
     }
-
-    public static void showDialog(Context ctx, String title, String message) {
-        new MaterialAlertDialogBuilder(ctx)
-                .setTitle(title)
-                .setMessage(message)
-                .setNegativeButton(android.R.string.yes, null)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
-    }
-
-
 }

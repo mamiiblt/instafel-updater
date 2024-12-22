@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,8 +26,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import me.mamiiblt.instafel.updater.MainActivity;
 import me.mamiiblt.instafel.updater.update.UpdateWorkHelper;
+import me.mamiiblt.instafel.updater.utils.CommandOutput;
 import me.mamiiblt.instafel.updater.utils.LogUtils;
 import me.mamiiblt.instafel.updater.R;
+import me.mamiiblt.instafel.updater.utils.RootManager;
 import me.mamiiblt.instafel.updater.utils.Utils;
 import rikka.shizuku.Shizuku;
 
@@ -34,6 +37,7 @@ public class InfoFragment extends Fragment {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static boolean rootStatus = false;
 
     private String mParam1;
     private String mParam2;
@@ -59,17 +63,17 @@ public class InfoFragment extends Fragment {
         }
 
     }
-    private TextView viewShizukuStatus, viewArchitecture, viewIType, viewStatus, viewBatteryStatus;
+    private TextView viewRootStatus, viewArchitecture, viewIType, viewStatus, viewBatteryStatus;
     private Button viewStartBtn, viewStopBtn;
     private FloatingActionButton viewFab;
     private SharedPreferences sharedPreferences;
-    public String STRING_AUTHORIZED, STRING_UNAUTHORIZED, STRING_STOPPED, STRING_NOT_INSTALLED, STRING_START_SERVICE, STRING_RESTRICTED, STRING_UNRESTICTED;
+    public String STRING_UNAUTHORIZED, STRING_STOPPED, STRING_RESTRICTED, STRING_NOT_FOUND, STRING_UNRESTICTED;
     private LogUtils logUtils;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
        View view = inflater.inflate(R.layout.fragment_info, container, false);
-       viewShizukuStatus = view.findViewById(R.id.statusTextView);
+       viewRootStatus = view.findViewById(R.id.statusTextView);
        viewArchitecture = view.findViewById(R.id.statusTextView2);
        viewIType = view.findViewById(R.id.statusTextView3);
        viewStatus = view.findViewById(R.id.statusTextView4);
@@ -80,11 +84,9 @@ public class InfoFragment extends Fragment {
        logUtils = new LogUtils(getActivity());
 
        Context ctx = getContext();
-       STRING_AUTHORIZED = ctx.getString(R.string.authorized);
        STRING_UNAUTHORIZED = ctx.getString(R.string.unauthorized);
+       STRING_NOT_FOUND = ctx.getString(R.string.not_found);
        STRING_STOPPED = ctx.getString(R.string.stopped);
-       STRING_NOT_INSTALLED = ctx.getString(R.string.not_installed);
-       STRING_START_SERVICE = ctx.getString(R.string.start_service);
        STRING_RESTRICTED = ctx.getString(R.string.battery_restiricted);
        STRING_UNRESTICTED = ctx.getString(R.string.battery_unrestiricted);
 
@@ -106,35 +108,28 @@ public class InfoFragment extends Fragment {
            viewBatteryStatus.setText(STRING_UNRESTICTED);
        }
 
-       if (Utils.isShizukuInstalled(getActivity())) {
-           if (Shizuku.pingBinder()) {
-               if (Utils.hasShizukuPermission()) {
-                   viewShizukuStatus.setText(STRING_AUTHORIZED);
+       if (sharedPreferences.getBoolean("root_request_complete", false)) {
+           if (RootManager.isDeviceRooted()) {
+               CommandOutput commandOutput = RootManager.execSuCommands("su -v", "su -V");
+               if (commandOutput.getExitCode() == 0) {
+                   rootStatus = true;
+                   String[] outputParts = commandOutput.getLog().trim().split("\n");
+                   viewRootStatus.setText("✔ " + outputParts[0].trim() + " (" + outputParts[1].trim() + ")");
                } else {
-                   viewShizukuStatus.setText(STRING_UNAUTHORIZED);
-                   view.findViewById(R.id.shizuku_status).setOnClickListener(new View.OnClickListener() {
+                   rootStatus = false;
+                   viewRootStatus.setText(STRING_UNAUTHORIZED);
+                   view.findViewById(R.id.root_status).setOnClickListener(new View.OnClickListener() {
                        @Override
                        public void onClick(View view) {
-                           if (Utils.hasShizukuPermission()) {
-                               viewShizukuStatus.setText(STRING_AUTHORIZED);
-                           } else {
-                               Shizuku.requestPermission(100);
-                           }
+                           RootManager.requestRootPermission();
                        }
                    });
                }
            } else {
-               Toast.makeText(ctx, ctx.getString(R.string.please_start_shizuku), Toast.LENGTH_SHORT).show();
-               viewShizukuStatus.setText(STRING_START_SERVICE);
+               viewRootStatus.setText(STRING_NOT_FOUND);
            }
        } else {
-           viewShizukuStatus.setText(STRING_NOT_INSTALLED);
-           view.findViewById(R.id.shizuku_status).setOnClickListener(new View.OnClickListener() {
-               @Override
-               public void onClick(View view) {
-                    Utils.openPlayStore(getActivity());
-               }
-           });
+           viewRootStatus.setText(this.getString(R.string.checking));
        }
 
        updateUI();
@@ -143,23 +138,12 @@ public class InfoFragment extends Fragment {
            @Override
            public void onClick(View view) {
                if (!Utils.getBatteryRestrictionStatus(getActivity())) {
-                   if (Utils.isShizukuInstalled(getActivity())) {
-                       if (Shizuku.pingBinder()) {
-                           if (Utils.hasShizukuPermission()) {
-                               logUtils.w(getContext().getString(R.string.upd_started));
-                               UpdateWorkHelper.scheduleWork(getActivity());
-                               updateUI();
-                           } else {
-                               Toast.makeText(ctx, ctx.getString(R.string.please_give_permission), Toast.LENGTH_SHORT).show();
-                               Utils.openShizuku(ctx);
-                           }
-                       } else {
-                           Toast.makeText(ctx, ctx.getString(R.string.please_start_shizuku), Toast.LENGTH_SHORT).show();
-                           Utils.openShizuku(ctx);
-                       }
+                   if (rootStatus) {
+                       logUtils.w(getContext().getString(R.string.upd_started));
+                       UpdateWorkHelper.scheduleWork(getActivity());
+                       updateUI();
                    } else {
-                       Toast.makeText(ctx, ctx.getString(R.string.please_install_shizuku), Toast.LENGTH_SHORT).show();
-                       Utils.openPlayStore(ctx);
+                       Toast.makeText(ctx, getString(R.string.please_install_root), Toast.LENGTH_SHORT).show();
                    }
                } else {
                    Toast.makeText(ctx, ctx.getString(R.string.please_allow_unrestiracted), Toast.LENGTH_SHORT).show();

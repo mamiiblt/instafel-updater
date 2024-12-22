@@ -32,15 +32,11 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import me.mamiiblt.instafel.updater.utils.LocalizationUtils;
 import me.mamiiblt.instafel.updater.utils.LogUtils;
-import me.mamiiblt.instafel.updater.utils.ShizukuInstaller;
-import me.mamiiblt.instafel.updater.utils.Utils;
-import rikka.shizuku.Shizuku;
+import me.mamiiblt.instafel.updater.utils.RootManager;
 
 public class MainActivity extends AppCompatActivity {
 
     private TextView titleView;
-    private final Shizuku.OnRequestPermissionResultListener REQUEST_PERMISSION_RESULT_LISTENER = this::onRequestPermissionsResult;
-
     SharedPreferences prefsApp;
     SharedPreferences.Editor prefsEditor;
     LogUtils logUtils;
@@ -58,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         if (!prefsApp.getBoolean("init", false)) {
             prefsEditor.putString("checker_arch", "NULL");
             prefsEditor.putString("checker_type", "NULL");
+            prefsEditor.putBoolean("root_request_complete", false);
             prefsEditor.putBoolean("init", true);
             prefsEditor.apply();
         }
@@ -70,21 +67,22 @@ public class MainActivity extends AppCompatActivity {
             setTheme(R.style.Base_Theme_InstafelUpdater);
         }
 
-        EdgeToEdge.enable(this);
-
-        setContentView(R.layout.activity_main);
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
-            return insets;
-        });
-
         if (prefsApp.getString("checker_arch", "NULL").equals("NULL") || prefsApp.getString("checker_type", "NULL").equals("NULL")) {
             Intent intent = new Intent(MainActivity.this, SetupActivity.class);
             startActivity(intent);
             finish();
         } else {
+
+            EdgeToEdge.enable(this);
+
+            setContentView(R.layout.activity_main);
+
+            ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+                Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
+                return insets;
+            });
+
             if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     new MaterialAlertDialogBuilder(this)
@@ -101,43 +99,25 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-        }
+            titleView = findViewById(R.id.title);
+            BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+            NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+            NavigationUI.setupWithNavController(bottomNavigationView, navController);
 
-        titleView = findViewById(R.id.title);
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        NavigationUI.setupWithNavController(bottomNavigationView, navController);
+            Context ctx = getApplicationContext();
 
-        Context ctx = getApplicationContext();
-
-        navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
-            @Override
-            public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
-                if (destination.getId() == R.id.nav_info) {
-                    titleView.setText(ctx.getString(R.string.status));
-                } else if (destination.getId() == R.id.nav_logs) {
-                    titleView.setText(ctx.getString(R.string.logs));
-                } else if (destination.getId() == R.id.nav_settings) {
-                    titleView.setText(ctx.getString(R.string.settings));
+            navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
+                @Override
+                public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
+                    if (destination.getId() == R.id.nav_info) {
+                        titleView.setText(ctx.getString(R.string.status));
+                    } else if (destination.getId() == R.id.nav_logs) {
+                        titleView.setText(ctx.getString(R.string.logs));
+                    } else if (destination.getId() == R.id.nav_settings) {
+                        titleView.setText(ctx.getString(R.string.settings));
+                    }
                 }
-            }
-        });
-    }
-
-    private void onRequestPermissionsResult(int requestCode, int grantResult) {
-        if (requestCode == 100) {
-            boolean granted = grantResult == PackageManager.PERMISSION_GRANTED;
-            if (granted) {
-                recreate();
-                logUtils.w("Shizuku permission is granted.");
-
-                if (Utils.getBatteryRestrictionStatus(this)) {
-                    Utils.showBatteryDialog(this);
-                }
-            } else {
-                logUtils.w("Shizuku permission is rejected.");
-                Utils.showDialog(this, this.getString(R.string.permission_rejected), this.getString(R.string.perm_rejected_desc));
-            }
+            });
         }
     }
 
@@ -146,33 +126,23 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 105) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                if (Utils.isShizukuInstalled(MainActivity.this)) {
-                    if (Shizuku.pingBinder()) {
-                        Shizuku.addRequestPermissionResultListener(REQUEST_PERMISSION_RESULT_LISTENER);
-                        if (!Utils.hasShizukuPermission()) {
-                            logUtils.w("Shizuku permission is not granted, requesting permission.");
-                            Shizuku.requestPermission(100);
-                        }
+                if (RootManager.isDeviceRooted()) {
+                    if (RootManager.requestRootPermission()) {
+                        Toast.makeText(MainActivity.this, "Root access granted", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(MainActivity.this, MainActivity.this.getString(R.string.please_start_shizuku), Toast.LENGTH_SHORT).show();
-                        Utils.openShizuku(MainActivity.this);
+                        Toast.makeText(MainActivity.this, "Root access rejected, please allow from manager.", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(MainActivity.this, MainActivity.this.getString(R.string.please_install_shizuku), Toast.LENGTH_SHORT).show();
-                    Utils.openPlayStore(MainActivity.this);
+                    Toast.makeText(MainActivity.this, "SU binary doesn't found in device, please root your device.", Toast.LENGTH_SHORT).show();
                 }
-
+                prefsEditor.putBoolean("root_request_complete", true);
+                prefsEditor.apply();
+                recreate();
             } else {
                 Toast.makeText(this, "Please allow notification permission from App Info", Toast.LENGTH_SHORT).show();
                 finish();
             }
         }
 
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Shizuku.removeRequestPermissionResultListener(REQUEST_PERMISSION_RESULT_LISTENER);
     }
 }
