@@ -33,7 +33,6 @@ import java.time.format.DateTimeFormatter;
 import me.mamiiblt.instafel.updater.utils.AppPreferences;
 import me.mamiiblt.instafel.updater.utils.LocalizationUtils;
 import me.mamiiblt.instafel.updater.utils.LogUtils;
-import me.mamiiblt.instafel.updater.utils.ShizukuInstaller;
 import me.mamiiblt.instafel.updater.utils.Utils;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -113,7 +112,6 @@ public class UpdateWork extends Worker {
                 preferences.getBoolean("12_hour_rule", false),
                 preferences.getBoolean("use_instafel_api", true),
                 preferences.getBoolean("disable_error_notifications", false),
-                preferences.getBoolean("advanced_userservice_mode", false),
                 preferences.getBoolean("crash_logger", false));
 
         // Check Network Statues
@@ -202,12 +200,6 @@ public class UpdateWork extends Worker {
                                             }
                                         }
 
-                                        // Start Shizuku User Service for run commands
-
-                                        logUtils.w("Starting UserService");
-                                        ShizukuInstaller.ensureUserService(ctx);
-
-
                                         String b_download_url = null;
                                         if (appPreferences.isUseInstafelApi()) {
                                             if (type.equals("uc")) {
@@ -232,7 +224,6 @@ public class UpdateWork extends Worker {
                                             Intent fgServiceIntent = new Intent(ctx, InstafelUpdateService.class);
                                             fgServiceIntent.putExtra("file_url", b_download_url);
                                             fgServiceIntent.putExtra("version", uVersion);
-                                            fgServiceIntent.putExtra("advanced_userservice_mode", appPreferences.isAllowAdvancedUserServiceMode());
                                             fgServiceIntent.putExtra("disable_error_log", appPreferences.isDisable_error_notifications());
                                             ctx.startService(fgServiceIntent);
                                         } else {

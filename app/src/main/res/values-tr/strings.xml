@@ -11,7 +11,7 @@
     <string name="cont">Devam Et</string>
     <string name="warning">Uyarı</string>
     <string name="warning_desc">Lütfe mimari ve kurulum türü seçiniz.</string>
-    <string name="shizuku_status">Shizuku Durumu</string>
+    <string name="root_status">Root Durumu</string>
     <string name="selected_arch">Kontrolcü Mimarisi</string>
     <string name="selected_installation_type">Kontrolcü Kurulum Türü</string>
     <string name="battery_restiriction">Pil Kısıtlaması</string>
@@ -23,18 +23,12 @@
     <string name="start">Başlat</string>
     <string name="stop">Durdur</string>
     <string name="permission_rejected">İzin Reddedildi</string>
-    <string name="perm_rejected_desc">Lütfen Shizuku uygulaması üzerinden Instafel Updater\'e izin verin.</string>
     <string name="stopped">❌ Durduruldu</string>
-    <string name="authorized">✔ Yetkilendirildi</string>
     <string name="unauthorized">❌ Yetkilendirilmedi</string>
-    <string name="not_installed">❌ Kurulu Değil</string>
-    <string name="start_service">❌ Shizuku Başlatılmadı</string>
-    <string name="please_start_shizuku">Lütfen Shizuku servisini uygulamasından başlatın</string>
-    <string name="please_install_shizuku">Lütfen Play Store\'den Shizuku\'yu indirin</string>
-    <string name="please_give_permission">Lütfen Shizuku uygulaması üzerinden Instafel Updater\'e izin verin</string>
+    <string name="please_install_root">Cihazınızda root bulunamadı, lütfen cihazınızı rootlayın.</string>
     <string name="please_allow_unrestiracted">Please set app battery restiraction mode to unrestiracted mode</string>
     <string name="dialog_title">İzin Al</string>
-    <string name="dialog_desc">Instafel Updater\'in çalışabilmesi için bildirim ve shizuku iznine gerek duymaktadır. İzin vermek için Tamam\'a basınız</string>
+    <string name="dialog_desc">Instafel Updater\'in çalışabilmesi için bildirim ve root iznine gerek duymaktadır. İzin vermek için Tamam\'a basınız</string>
     <string name="dialog_ok">Tamam</string>
     <string name="hour">saat</string>
     <string name="minute">dakika</string>
@@ -81,8 +75,6 @@
     <string name="developed_by">mamiiblt tarafından ❤️ ile geliştirilmiştir</string>
     <string name="about_app">About</string>
     <string name="instafel_website">Instafel Websitesi</string>
-    <string name="advanced_userservice">Gelişmiş UserService Modu</string>
-    <string name="advanced_userservice_s">Güncelleyici apkyı kurmadan önce 5 kez UserService\'yi kontrol eder.</string>
     <string name="use_instafel">Instafel API\'yi Kullan (Önerilir)</string>
     <string name="use_instafel_s">Güncelleme kontrolü için GitHub API\'si yerine yeni Instafel API\'sini kullanır.</string>
     <string name="crash_logs">Hataları Kaydet</string>
@@ -91,4 +83,7 @@
     <string name="disable_error_s">Çok önemli olmayan uyarılar için bildirim göndermez.</string>
     <string name="updater_guide">Updater Kılavuzu</string>
     <string name="updater_guide_s">Instafel Updater\'i nasıl kullanacağınızı öğrenin</string>
+    <string name="checking">Kontrol ediliyor..</string>
+    <string name="not_found">❌ SU cihazda bulunamadı</string>
+    <string name="please_allow_root">Root erişimi reddedildi, lütfen managerden izin verin.</string>
 </resources>

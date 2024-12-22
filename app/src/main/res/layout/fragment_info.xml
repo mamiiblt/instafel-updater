@@ -21,7 +21,7 @@
             app:cardElevation="4dp">
 
             <LinearLayout
-                android:id="@+id/shizuku_status"
+                android:id="@+id/root_status"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -30,7 +30,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/shizuku_status"
+                    android:text="@string/root_status"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textStyle="bold" />
 
@@ -70,6 +70,7 @@
                     android:layout_height="wrap_content"
                     android:text="_restype"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
+
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 

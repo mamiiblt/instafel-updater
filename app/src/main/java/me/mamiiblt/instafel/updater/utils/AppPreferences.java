@@ -2,9 +2,9 @@ package me.mamiiblt.instafel.updater.utils;
 
 public class AppPreferences {
     private String checker_interval, arch, itype;
-    private boolean send_notification, send_toast, use_mobile_data, hour_mode12, use_instafel_api, disable_error_notifications, crash_logger, advanced_userservice_mode;
+    private boolean send_notification, send_toast, use_mobile_data, hour_mode12, use_instafel_api, disable_error_notifications, crash_logger;
 
-    public AppPreferences(String checker_interval, String arch, String itype, boolean send_notification, boolean send_toast, boolean use_mobile_data, boolean hour_mode12, boolean use_instafel_api, boolean disable_error_notifications, boolean crash_logger, boolean advanced_userservice_mode) {
+    public AppPreferences(String checker_interval, String arch, String itype, boolean send_notification, boolean send_toast, boolean use_mobile_data, boolean hour_mode12, boolean use_instafel_api, boolean disable_error_notifications, boolean crash_logger) {
         this.checker_interval = checker_interval;
         this.arch = arch;
         this.itype = itype;
@@ -14,7 +14,6 @@ public class AppPreferences {
         this.hour_mode12 = hour_mode12;
         this.use_instafel_api = use_instafel_api;
         this.disable_error_notifications = disable_error_notifications;
-        this.advanced_userservice_mode = advanced_userservice_mode;
         this.crash_logger = crash_logger;
     }
 
@@ -50,9 +49,6 @@ public class AppPreferences {
         return use_instafel_api;
     }
 
-    public boolean isAllowAdvancedUserServiceMode() {
-        return advanced_userservice_mode;
-    }
 
     public boolean isCrashLoggerEnabled() {
         return crash_logger;
