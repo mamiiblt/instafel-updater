@@ -49,6 +49,7 @@ public class SetupActivity extends AppCompatActivity {
 
         RadioGroup radioGroupArch = findViewById(R.id.architecture_radio_group);
         RadioGroup radioGroupInstallType = findViewById(R.id.install_type_radio_group);
+        RadioGroup radioGroupIMethod = findViewById(R.id.method_radio_group);
         radioGroupArch.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId == R.id.radio_arm64) {
                 editor.putString("checker_arch", "arm64-v8a (64-bit)");
@@ -66,11 +67,20 @@ public class SetupActivity extends AppCompatActivity {
             }
             editor.apply();
         });
+
+        radioGroupIMethod.setOnCheckedChangeListener((group, checkedId) -> {
+            if (checkedId == R.id.radio_root) {
+                editor.putString("checker_method", "root");
+            } else if (checkedId == R.id.radio_shizuku) {
+                editor.putString("checker_method", "shi");
+            }
+            editor.apply();
+        });
     }
 
     public void next(View view) {
 
-        if (!preferences.getString("checker_arch", "NULL").equals("NULL") && !preferences.getString("checker_type", "MULL").equals("NULL")) {
+        if (!preferences.getString("checker_method", "NULL").equals("NULL") && !preferences.getString("checker_arch", "NULL").equals("NULL") && !preferences.getString("checker_type", "MULL").equals("NULL")) {
 
             // set app preferences too
             editor.putString("checker_interval", "4 hour");

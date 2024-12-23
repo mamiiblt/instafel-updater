@@ -11,6 +11,7 @@
     <string name="cont">Devam Et</string>
     <string name="warning">Uyarı</string>
     <string name="warning_desc">Lütfe mimari ve kurulum türü seçiniz.</string>
+    <string name="shiuku_status">Shizuku Durumu</string>
     <string name="root_status">Root Durumu</string>
     <string name="selected_arch">Kontrolcü Mimarisi</string>
     <string name="selected_installation_type">Kontrolcü Kurulum Türü</string>
@@ -69,6 +70,7 @@
     <string name="language_s">Uygulamanın dilini ayarlayın</string>
 
     <!-- FORMATTED STRINGS -->
+    <string name="please_give_permission">Lütfen Shizuku\'dan Instafel Updater\'e izin verin.</string>
     <string name="running">✔ %1$s modunda çalışıyor</string>
     <string name="n4_sub">Instafel v%1$s sürümüne güncellendi</string>
     <string name="app_version_s">Sürüm v%1$s (commit %2$s)</string>
@@ -86,4 +88,10 @@
     <string name="checking">Kontrol ediliyor..</string>
     <string name="not_found">❌ SU cihazda bulunamadı</string>
     <string name="please_allow_root">Root erişimi reddedildi, lütfen managerden izin verin.</string>
+    <string name="authorized">✔ Yetkilendirildi</string>
+    <string name="not_installed">❌ Shizuku Kurulu Değil</string>
+    <string name="start_service">❌ Shizuku Çalışmıyor</string>
+    <string name="perm_rejected_desc">Lütfen Shizuku uygulamasından Instafle Updater\'e izin verin.</string>
+    <string name="please_start_shizuku">Lütfen Shizuku servisini başlatın</string>
+    <string name="please_install_shizuku">Lütfen Play Store\'den Shizuku\'yu indirin.</string>
 </resources>

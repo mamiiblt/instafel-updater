@@ -27,19 +27,20 @@
         android:id="@+id/architecture_radio_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
         <RadioButton
             android:id="@+id/radio_arm64"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="arm64-v8a (64-bit)"/>
+            android:layout_marginRight="20dp"
+            android:text="arm64-v8a"/>
 
         <RadioButton
             android:id="@+id/radio_arm32"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="armeabi-v7a (32-bit)"/>
+            android:text="armeabi-v7a"/>
     </RadioGroup>
 
     <TextView
@@ -54,18 +55,47 @@
         android:id="@+id/install_type_radio_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
         <RadioButton
             android:id="@+id/radio_unclone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
             android:text="Unclone"/>
         <RadioButton
             android:id="@+id/radio_clone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Clone"/>
+
+    </RadioGroup>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Installation Method"
+        android:textSize="18sp"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="12dp"/>
+
+    <RadioGroup
+        android:id="@+id/method_radio_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/radio_root"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:text="Root"/>
+        <RadioButton
+            android:id="@+id/radio_shizuku"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Shizuku"/>
 
     </RadioGroup>
 

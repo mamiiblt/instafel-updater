@@ -26,6 +26,8 @@ import me.mamiiblt.instafel.updater.R;
 import me.mamiiblt.instafel.updater.utils.CommandOutput;
 import me.mamiiblt.instafel.updater.utils.LogUtils;
 import me.mamiiblt.instafel.updater.utils.RootManager;
+import me.mamiiblt.instafel.updater.utils.ShizukuInstaller;
+import me.mamiiblt.instafel.updater.utils.Utils;
 
 public class InstafelUpdateService extends Service {
 
@@ -38,7 +40,6 @@ public class InstafelUpdateService extends Service {
     private Context ctx;
     private LogUtils logUtils;
     private String version;
-    private boolean advanced_userservice_mode, disable_priority_error_log;
     NotificationManager notificationManager;
     NotificationCompat.Builder notificationBuilder;
 
@@ -58,13 +59,15 @@ public class InstafelUpdateService extends Service {
             createNotificationChannel();
             startForeground(NOTIFICATION_ID, notifyWaitingAPI());
             version = intent.getStringExtra("version");
-            disable_priority_error_log = intent.getBooleanExtra("disable_error_log", false);
             downloadFile(intent.getStringExtra("file_url"));
         }
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     private void downloadFile(String fileUrl) {
+        if (Utils.getMethod(ctx) != 1) {
+            ShizukuInstaller.ensureUserService(ctx);
+        }
         this.df = new DecimalFormat("#.##");
 
         try {
@@ -118,6 +121,9 @@ public class InstafelUpdateService extends Service {
                     errorOccured = true;
                 } finally {
                     if (!errorOccured) {
+                        if (Utils.getMethod(ctx) != 1) {
+                            ShizukuInstaller.ensureUserService(ctx);
+                        }
                         updateApp(ifl_update_file);
                     }
                 }
@@ -167,24 +173,26 @@ public class InstafelUpdateService extends Service {
         logUtils.w("Download complete, installation is started.");
         new Thread(() -> {
             try {
-                logUtils.w("Installing update");
-                CommandOutput commandOutput = RootManager.execSuCommands(
-                        "cp " + ifl_update_file.getAbsolutePath() + " /data/local/tmp/INSTAFEL_UPDATE.apk",
-                        "pm install /data/local/tmp/INSTAFEL_UPDATE.apk",
-                        "rm /data/local/tmp/INSTAFEL_UPDATE.apk"
-                );
 
-                if (commandOutput.getExitCode() == 0 && commandOutput.getLog().contains("Success")) {
-                    logUtils.w("Update installed.");
-                    recreateFilesDir();
-                    notifyUpdateInstalled();
-                    logUtils.w("Instafel succesfully updated.");
+                if (Utils.getMethod(ctx) == 1) {
+                    installApk(ifl_update_file, true);
                 } else {
-                    logUtils.w("Update installation failed.");
-                    notifyError("An error occurred when installing update (RESULT_FAILED)");
-                    logUtils.w("exitCode: " + commandOutput.getExitCode());
-                    logUtils.w("output: " + commandOutput.getLog());
-                    logUtils.w("errOutput: " + commandOutput.getErrorLog());
+                    if (ShizukuInstaller.isShizukuSupported()) {
+                        if (Utils.hasShizukuPermission()) {
+                            for (int i = 0; i < 5; i++) {
+                                if (ShizukuInstaller.ensureUserService(ctx)) {
+                                    i = 10;
+                                } else {
+                                    i++;
+                                }
+                            }
+                            installApk(ifl_update_file, false);
+                        } else {
+                            logUtils.w("Shizuku permission is not granted for Install.");
+                        }
+                    } else {
+                        logUtils.w("Shizuku is not supported.");
+                    }
                 }
             } catch (Exception e) {
                 logUtils.w("Installation method crashed.");
@@ -194,6 +202,47 @@ public class InstafelUpdateService extends Service {
                 notifyError("An error occurred when installing update (CRASH)");
             }
         }).start();
+    }
+
+    private void installApk(File ifl_update_file, boolean status) {
+        if (status) {
+            logUtils.w("Installing update");
+            CommandOutput commandOutput = RootManager.execSuCommands(
+                    "cp " + ifl_update_file.getAbsolutePath() + " /data/local/tmp/INSTAFEL_UPDATE.apk",
+                    "pm install /data/local/tmp/INSTAFEL_UPDATE.apk",
+                    "rm /data/local/tmp/INSTAFEL_UPDATE.apk"
+            );
+
+            if (commandOutput.getExitCode() == 0 && commandOutput.getLog().contains("Success")) {
+                logUtils.w("Update installed.");
+                recreateFilesDir();
+                notifyUpdateInstalled();
+                logUtils.w("Instafel succesfully updated.");
+            } else {
+                logUtils.w("Update installation failed.");
+                notifyError("An error occurred when installing update (RESULT_FAILED)");
+                logUtils.w("exitCode: " + commandOutput.getExitCode());
+                logUtils.w("output: " + commandOutput.getLog());
+                logUtils.w("errOutput: " + commandOutput.getErrorLog());
+            }
+        } else {
+            logUtils.w("Shizuku permission is valid, triggering UserService again, " + ShizukuInstaller.ensureUserService(ctx));
+            logUtils.w("Copying downloaded apk file to temp.");
+            ShizukuInstaller.runCommand(ctx, "cp " + ifl_update_file + " /data/local/tmp/INSTAFEL_UPDATE.apk");
+            logUtils.w("Installing update");
+            String updateLog = ShizukuInstaller.runCommand(ctx, "pm install /data/local/tmp/INSTAFEL_UPDATE.apk");
+            if (updateLog.trim().equals("Success")) {
+                logUtils.w("Update installed.");
+                ShizukuInstaller.runCommand(ctx, "rm -r /data/local/tmp/INSTAFEL_UPDATE.apk");
+                recreateFilesDir();
+                logUtils.w("Downloaded apk & temp apk removed");
+                notifyUpdateInstalled();
+                logUtils.w("Instafel succesfully updated.");
+            } else {
+                logUtils.w("Update installation failed.");
+                notifyError("An error occurred when installing update (RESULT_FAILED)");
+            }
+        }
     }
 
     private void notifyStatus(int prog, String finalFormattedDownloadedSize) {
