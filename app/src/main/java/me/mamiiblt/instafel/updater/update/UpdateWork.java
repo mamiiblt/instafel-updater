@@ -33,6 +33,7 @@ import java.time.format.DateTimeFormatter;
 import me.mamiiblt.instafel.updater.utils.AppPreferences;
 import me.mamiiblt.instafel.updater.utils.LocalizationUtils;
 import me.mamiiblt.instafel.updater.utils.LogUtils;
+import me.mamiiblt.instafel.updater.utils.ShizukuInstaller;
 import me.mamiiblt.instafel.updater.utils.Utils;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -44,15 +45,8 @@ public class UpdateWork extends Worker {
     private static final int NOTIFICATION_ID = 1;
     private AppPreferences appPreferences;
     private Context ctx;
-    private double currentDownloadedSizeMegabyte;
-    private long fileSize;
-    private String formattedFileSize;
-    private DecimalFormat df;
-    private NotificationCompat.Builder notificationBuilder;
-    private int notificationId = 105;
     private String uVersion;
     private LogUtils logUtils;
-    private NotificationManager notificationManager;
     private LocalizationUtils localizationUtils;
 
     public UpdateWork(Context ctx, WorkerParameters params) {
@@ -67,8 +61,6 @@ public class UpdateWork extends Worker {
         ctx = getApplicationContext();
         logUtils.w("");
         logUtils.w("Work is running.");
-        notificationBuilder = new NotificationCompat.Builder(ctx, CHANNEL_ID);
-        notificationManager = ctx.getSystemService(NotificationManager.class);
         localizationUtils = new LocalizationUtils(getApplicationContext());
 
         // Update locale
@@ -200,6 +192,10 @@ public class UpdateWork extends Worker {
                                             }
                                         }
 
+                                        if (Utils.getMethod(ctx) != 1) {
+                                            ShizukuInstaller.ensureUserService(ctx);
+                                        }
+
                                         String b_download_url = null;
                                         if (appPreferences.isUseInstafelApi()) {
                                             if (type.equals("uc")) {
@@ -224,7 +220,6 @@ public class UpdateWork extends Worker {
                                             Intent fgServiceIntent = new Intent(ctx, InstafelUpdateService.class);
                                             fgServiceIntent.putExtra("file_url", b_download_url);
                                             fgServiceIntent.putExtra("version", uVersion);
-                                            fgServiceIntent.putExtra("disable_error_log", appPreferences.isDisable_error_notifications());
                                             ctx.startService(fgServiceIntent);
                                         } else {
                                             sendError("Updater can't found update asset!", true, null);

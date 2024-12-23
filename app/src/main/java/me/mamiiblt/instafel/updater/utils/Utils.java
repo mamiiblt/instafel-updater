@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageInstaller;
@@ -15,6 +16,8 @@ import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.Log;
 
+import androidx.preference.PreferenceManager;
+
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.List;
@@ -24,6 +27,30 @@ import me.mamiiblt.instafel.updater.R;
 import rikka.shizuku.Shizuku;
 
 public class Utils {
+
+    public static boolean status = false;
+
+    public static boolean hasShizukuPermission() {
+        if (Shizuku.isPreV11()) {
+            return false;
+        }
+
+        return Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED;
+    }
+
+    public static boolean isShizukuInstalled(Activity activity) {
+        if (getAppVersionCode(activity, "moe.shizuku.privileged.api").equals("NOT_INSTALLED")) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public static void openShizuku(Context ctx) {
+        Intent intent = ctx.getPackageManager().getLaunchIntentForPackage("moe.shizuku.privileged.api");
+        ctx.startActivity(intent);
+    }
+
     public static void showBatteryDialog(Context ctx) {
         if (Utils.getBatteryRestrictionStatus(ctx)) {
             new MaterialAlertDialogBuilder(ctx)
@@ -32,6 +59,15 @@ public class Utils {
                     .setPositiveButton(ctx.getString(R.string.dialog_ok), (dialog, which) -> openBatterySettings(ctx))
                     .setCancelable(false)
                     .show();
+        }
+    }
+
+    public static int getMethod(Context ctx) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
+        if (sharedPreferences.getString("checker_method", "shizuku").equals("root")) {
+            return 1;
+        } else {
+            return 2;
         }
     }
 
@@ -80,5 +116,20 @@ public class Utils {
             e.printStackTrace();
             return "NOT_INSTALLED";
         }
+    }
+
+    public static void openPlayStore(Context ctx) {
+        Intent intent = new Intent("android.intent.action.VIEW", Uri.parse("https://play.google.com/store/apps/details?id=moe.shizuku.privileged.api"));
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        ctx.startActivity(intent);
+    }
+
+    public static void showDialog(Context ctx, String title, String message) {
+        new MaterialAlertDialogBuilder(ctx)
+                .setTitle(title)
+                .setMessage(message)
+                .setNegativeButton(android.R.string.yes, null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 }

@@ -17,6 +17,10 @@
     <string name="warning_desc">Please select an architecture and installation type.</string>
 
     <!-- Status Fragment -->
+    <string name="authorized">✔ Authorized</string>
+    <string name="not_installed">❌ Shizuku Not Installed</string>
+    <string name="start_service">❌ Shizuku is Not Running</string>
+    <string name="shiuku_status">Shizuku Status</string>
     <string name="root_status">Root Status</string>
     <string name="selected_arch">Checker Architecture</string>
     <string name="selected_installation_type">Checker Installation Type</string>
@@ -29,6 +33,10 @@
     <string name="start">Start</string>
     <string name="stop">Stop</string>
     <string name="permission_rejected">Permission Rejected</string>
+    <string name="perm_rejected_desc">Please authorize Instafel Updater from Shizuku App</string>
+    <string name="please_start_shizuku">Please start Shizuku from app</string>
+    <string name="please_install_shizuku">Please install Shizuku from Play Store</string>
+    <string name="please_give_permission">Please authorize Instafel Updater on Shizuku</string>
     <string name="running">✔ Running with %1$s mode</string>
     <string name="stopped">❌ Stopped</string>
     <string name="unauthorized">❌ Unauthorized</string>
